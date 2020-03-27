@@ -1,0 +1,12 @@
+package Service;
+
+public enum ScreenEnum {
+    LOGIN,
+    ORDER,
+    CUSTOMER_PROFILE,
+    EMPLOYEE_PROFILE,
+    EMPLOYEE_LIST,
+    DELIVERABLES_LIST,
+    ORDER_ASSIGNMENT,
+    VEHICLE_ASSIGNMENT,
+}

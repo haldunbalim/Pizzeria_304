@@ -1,59 +1,51 @@
 package ViewController;
 
-
 import Model.UserType;
-import Service.AuthStatus;
-import Service.AuthenticationManager;
-import Service.Coordinator;
-import Service.ScreenEnum;
+import Reusable.PlaceholderFocusListener;
+import Service.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 public class LoginViewController extends AbstractViewController {
 
-    private static LoginViewController instance = new LoginViewController();;
-    private JLabel labelUsername = new JLabel("Enter username: ");
-    private JLabel labelPassword = new JLabel("Enter password: ");
-    private JTextField textUsername = new JTextField(20);
-    private JPasswordField fieldPassword = new JPasswordField(20);
-    private JButton buttonLogin = new JButton("Login");
-    private JButton buttonRegister = new JButton("Register");
-
+    private static LoginViewController instance = new LoginViewController();
+    public JPanel mainPanel;
+    private JTextField usernameTextField;
+    private JButton loginButton;
+    private JButton registerButton;
+    private JLabel errorLabel;
+    private JTextField passwordTextField;
 
     private LoginViewController(){
-        initializeView();
         addUIFunctionality();
+        errorLabel.setText("");
+        mainPanel.setBounds(50, 50, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
     }
 
     public static LoginViewController getInstance() {
         return instance;
     }
 
+
     private void addUIFunctionality(){
-        buttonLogin.addActionListener(new ActionListener() {
+        loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = labelUsername.getText();
-                String password = labelPassword.getText();
+                String username = usernameTextField.getText();
+                String password = passwordTextField.getText();
 
-                //TODO: Show error to user if username or pwd is invalid
-                if (username.length()<3){
-                    System.out.println("Invalid Username");
-                }
-
-                if (password.length()<3){
-                    System.out.println("Invalid Password");
-                }
+                if (!checkFieldValidity(username, password))
+                    return;
 
                 AuthStatus authStatus = AuthenticationManager.getInstance().login(username,password);
 
-                //TODO: Show error to user if sthg went wrong
                 switch (authStatus){
                     case AUTH_FAILED:
-                        System.out.println("Auth failed wrong username or pwd");
+                        showError("Auth failed wrong username or pwd");
                         break;
                     case AUTH_SUCCESSFUL:
                         UserType userType = AuthenticationManager.getInstance().getCurrentUser().getUserType();
@@ -70,50 +62,64 @@ public class LoginViewController extends AbstractViewController {
                         }
                         break;
                     case CONNECTION_ERROR:
-                        System.out.println("Auth failed wrong username or pwd");
+                        showError("Auth Failed connection error");
                         break;
                 }
             }
         });
 
-
-        buttonRegister.addActionListener(new ActionListener() {
+        registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Coordinator.getInstance().openScreen(ScreenEnum.CUSTOMER_PROFILE);
+                String username = usernameTextField.getText();
+                String password = passwordTextField.getText();
+
+                if (!checkFieldValidity(username, password))
+                    return;
+
+                AuthStatus authStatus = AuthenticationManager.getInstance().signUp(username, password);
+                switch (authStatus) {
+                    case AUTH_FAILED:
+                        showError("Auth failed there is a user with this username");
+                        break;
+                    case AUTH_SUCCESSFUL:
+                        Coordinator.getInstance().openScreen(ScreenEnum.CUSTOMER_PROFILE);
+                        break;
+                    case CONNECTION_ERROR:
+                        showError("Auth Failed connection error");
+                        break;
+                }
             }
         });
+
+        usernameTextField.setText("Enter Username");
+        usernameTextField.setForeground(Color.GRAY);
+        usernameTextField.addFocusListener(new PlaceholderFocusListener(usernameTextField, "Enter Username"));
+
+        passwordTextField.setText("Enter Password");
+        passwordTextField.setForeground(Color.GRAY);
+        passwordTextField.addFocusListener(new PlaceholderFocusListener(passwordTextField, "Enter Password"));
+
     }
 
-    private void initializeView(){
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.insets = new Insets(10, 10, 10, 10);
 
-        // add components to the panel
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        add(labelUsername, constraints);
+    private void showError(String errorMsg) {
+        errorLabel.setText(errorMsg);
+        errorLabel.setVisible(true);
+    }
 
-        constraints.gridx = 1;
-        add(textUsername, constraints);
+    private boolean checkFieldValidity(String username, String password) {
+        if (username.length() < 3) {
+            showError("Invalid Username");
+            return false;
+        }
 
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        add(labelPassword, constraints);
+        if (password.length() < 3) {
+            showError("Invalid Password");
+            return false;
+        }
 
-        constraints.gridx = 1;
-        add(fieldPassword, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.gridwidth = 2;
-        constraints.anchor = GridBagConstraints.CENTER;
-        add(buttonLogin, constraints);
-
-        // set border for the panel
-        setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "Login Panel"));
+        return true;
     }
 
 

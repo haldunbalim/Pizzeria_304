@@ -2,6 +2,9 @@ package ViewController;
 
 import javax.swing.*;
 
-public abstract class AbstractViewController extends JPanel {
+public abstract class AbstractViewController {
+    public JPanel mainPanel;
 
+    public AbstractViewController() {
+    }
 }

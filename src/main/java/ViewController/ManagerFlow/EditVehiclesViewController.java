@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class EditVehiclesViewController extends AbstractViewController implements TableModelListener {
     private static EditVehiclesViewController instance = new EditVehiclesViewController();
-    public JPanel mainPanel;
+    private JPanel mainPanel;
     JTable table;
     EditVehiclesTableModel tableModel;
     VehicleDataSource dataSource = VehicleDataSource.getInstance();

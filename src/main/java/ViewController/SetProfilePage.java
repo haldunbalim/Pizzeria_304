@@ -24,6 +24,7 @@ public class SetProfilePage extends AbstractViewController {
     private String[] cities = {"Vancouver", "Toronto", "Montreal", "Istanbul"};
 
     private SetProfilePage() {
+        //TODO: add cities
         for (String city : cities) {
             cityComboBox.addItem(city);
         }
@@ -50,8 +51,14 @@ public class SetProfilePage extends AbstractViewController {
         return mainPanel;
     }
 
+    //TODO: Implement this
     private boolean checkIfAllFieldsAreValid() {
         return true;
+    }
+
+    private void showError(String st) {
+        errorLabel.setText(st);
+        errorLabel.setVisible(true);
     }
 
 

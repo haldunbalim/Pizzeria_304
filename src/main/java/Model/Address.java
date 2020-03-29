@@ -51,4 +51,9 @@ public class Address {
     public void setHouseNumber(int houseNumber) {
         this.houseNumber = houseNumber;
     }
+
+    @Override
+    public String toString() {
+        return streetName + " " + houseNumber + " " + city + " " + postalCode;
+    }
 }

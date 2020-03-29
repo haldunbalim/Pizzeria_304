@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class EditEmployeesViewController extends AbstractViewController implements TableModelListener {
     private static EditEmployeesViewController instance = new EditEmployeesViewController();
-    public JPanel mainPanel;
+    private JPanel mainPanel;
     private JTable table;
     private EditEmployeesTableModel tableModel;
     private EmployeesDataSource dataSource = EmployeesDataSource.getInstance();

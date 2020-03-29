@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class EditDeliverablesViewController extends AbstractViewController implements TableModelListener {
     private static EditDeliverablesViewController instance = new EditDeliverablesViewController();
-    public JPanel mainPanel;
+    private JPanel mainPanel;
     JTable table;
     EditDeliverablesTableModel tableModel;
     DeliverableDataSource dataSource = DeliverableDataSource.getInstance();

@@ -5,7 +5,6 @@ import Reusable.PlaceholderFocusListener;
 import Service.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,9 +20,11 @@ public class LoginViewController extends AbstractViewController {
     private JTextField passwordTextField;
 
     private LoginViewController(){
-        addUIFunctionality();
         errorLabel.setText("");
         mainPanel.setBounds(50, 50, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+        usernameTextField.addFocusListener(new PlaceholderFocusListener(usernameTextField, "Enter Username"));
+        passwordTextField.addFocusListener(new PlaceholderFocusListener(passwordTextField, "Enter Password"));
+        addUIFunctionality();
     }
 
     public static LoginViewController getInstance() {
@@ -91,14 +92,6 @@ public class LoginViewController extends AbstractViewController {
                 }
             }
         });
-
-        usernameTextField.setText("Enter Username");
-        usernameTextField.setForeground(Color.GRAY);
-        usernameTextField.addFocusListener(new PlaceholderFocusListener(usernameTextField, "Enter Username"));
-
-        passwordTextField.setText("Enter Password");
-        passwordTextField.setForeground(Color.GRAY);
-        passwordTextField.addFocusListener(new PlaceholderFocusListener(passwordTextField, "Enter Password"));
 
     }
 

@@ -13,6 +13,8 @@ public class PlaceholderFocusListener implements FocusListener {
     public PlaceholderFocusListener(JTextField textField, String placeholderText) {
         this.textField = textField;
         this.placeholderText = placeholderText;
+        textField.setText(placeholderText);
+        textField.setForeground(Color.GRAY);
     }
 
     @Override

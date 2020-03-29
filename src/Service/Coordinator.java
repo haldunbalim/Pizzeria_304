@@ -2,6 +2,7 @@ package Service;
 
 
 import ViewController.LoginViewController;
+import ViewController.ManagerFlow.EditDeliverablesViewController;
 
 import javax.swing.*;
 
@@ -9,7 +10,7 @@ public class Coordinator {
     private static Coordinator instance = new Coordinator();
     private JFrame frame = new JFrame();
     public ScreenEnum currentScreen;
-    private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
+    private static final ScreenEnum initialPage = ScreenEnum.EDIT_DELIVERABLES_LIST;
 
     public static Coordinator getInstance() {
         return instance;
@@ -20,12 +21,11 @@ public class Coordinator {
 
     public void start(){
         frame.setVisible(true);
-        frame.setTitle("Title");
-        frame.setFocusable(true);
+        frame.setTitle("Pizzeria");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(100, 100, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         frame.setResizable(false);
-        openScreen(ScreenEnum.LOGIN);
+        openScreen(initialPage);
     }
 
 
@@ -33,7 +33,6 @@ public class Coordinator {
         JPanel panel = getPanel(screen);
         frame.setContentPane(panel);
         frame.revalidate();
-        frame.repaint();
         currentScreen = screen;
     }
 
@@ -54,6 +53,8 @@ public class Coordinator {
                 return null;
             case DELIVERABLES_LIST:
                 return null;
+            case EDIT_DELIVERABLES_LIST:
+                return EditDeliverablesViewController.getInstance().mainPanel;
             case VEHICLE_ASSIGNMENT:
                 return null;
         }

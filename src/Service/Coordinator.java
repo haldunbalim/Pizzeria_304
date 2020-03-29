@@ -2,15 +2,16 @@ package Service;
 
 
 import ViewController.LoginViewController;
-import ViewController.ManagerFlow.EditDeliverablesViewController;
+import ViewController.ManagerFlow.ManagerTabs;
+import ViewController.SetProfilePage;
 
 import javax.swing.*;
 
 public class Coordinator {
     private static Coordinator instance = new Coordinator();
     private JFrame frame = new JFrame();
-    public ScreenEnum currentScreen;
-    private static final ScreenEnum initialPage = ScreenEnum.EDIT_DELIVERABLES_LIST;
+    private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
+    private ScreenEnum currentScreen;
 
     public static Coordinator getInstance() {
         return instance;
@@ -28,37 +29,22 @@ public class Coordinator {
         openScreen(initialPage);
     }
 
-
     public void openScreen(ScreenEnum screen){
-        JPanel panel = getPanel(screen);
-        frame.setContentPane(panel);
+
+        switch (screen){
+            case LOGIN:
+                frame.setContentPane(LoginViewController.getInstance().getMainPanel());
+                break;
+            case ORDER:
+                frame.setContentPane(SetProfilePage.getInstance().getMainPanel());
+                break;
+            case MANAGER_TABS:
+                frame.setContentPane(ManagerTabs.getInstance());
+                break;
+        }
         frame.revalidate();
         currentScreen = screen;
     }
 
-
-    private JPanel getPanel(ScreenEnum screen) {
-        switch (screen){
-            case LOGIN:
-                return LoginViewController.getInstance().mainPanel;
-            case ORDER:
-                return null;
-            case EMPLOYEE_LIST:
-                return null;
-            case CUSTOMER_PROFILE:
-                return null;
-            case EMPLOYEE_PROFILE:
-                return null;
-            case ORDER_ASSIGNMENT:
-                return null;
-            case DELIVERABLES_LIST:
-                return null;
-            case EDIT_DELIVERABLES_LIST:
-                return EditDeliverablesViewController.getInstance().mainPanel;
-            case VEHICLE_ASSIGNMENT:
-                return null;
-        }
-        return null;
-    }
 }
 

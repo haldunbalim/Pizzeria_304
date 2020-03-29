@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 public class LoginViewController extends AbstractViewController {
 
     private static LoginViewController instance = new LoginViewController();
-    public JPanel mainPanel;
+    private JPanel mainPanel;
     private JTextField usernameTextField;
     private JButton loginButton;
     private JButton registerButton;
@@ -39,7 +39,7 @@ public class LoginViewController extends AbstractViewController {
                 String username = usernameTextField.getText();
                 String password = passwordTextField.getText();
 
-                if (!checkFieldValidity(username, password))
+                if (checkIfFieldsInvalid(username, password))
                     return;
 
                 AuthStatus authStatus = AuthenticationManager.getInstance().login(username,password);
@@ -55,10 +55,13 @@ public class LoginViewController extends AbstractViewController {
                                 Coordinator.getInstance().openScreen(ScreenEnum.ORDER);
                                 break;
                             case MANAGER:
-                                Coordinator.getInstance().openScreen(ScreenEnum.EMPLOYEE_LIST);
+                                Coordinator.getInstance().openScreen(ScreenEnum.MANAGER_TABS);
                                 break;
                             case EMPLOYEE:
-                                Coordinator.getInstance().openScreen(ScreenEnum.ORDER_ASSIGNMENT);
+                                if (AuthenticationManager.getInstance().getCurrentUser().getName().equals("NewUserName"))
+                                    Coordinator.getInstance().openScreen(ScreenEnum.SET_PROFILE_PAGE);
+                                else
+                                    Coordinator.getInstance().openScreen(ScreenEnum.EMPLOYEE_TABS);
                                 break;
                         }
                         break;
@@ -75,7 +78,7 @@ public class LoginViewController extends AbstractViewController {
                 String username = usernameTextField.getText();
                 String password = passwordTextField.getText();
 
-                if (!checkFieldValidity(username, password))
+                if (checkIfFieldsInvalid(username, password))
                     return;
 
                 AuthStatus authStatus = AuthenticationManager.getInstance().signUp(username, password);
@@ -84,7 +87,7 @@ public class LoginViewController extends AbstractViewController {
                         showError("Auth failed there is a user with this username");
                         break;
                     case AUTH_SUCCESSFUL:
-                        Coordinator.getInstance().openScreen(ScreenEnum.CUSTOMER_PROFILE);
+                        Coordinator.getInstance().openScreen(ScreenEnum.SET_PROFILE_PAGE);
                         break;
                     case CONNECTION_ERROR:
                         showError("Auth Failed connection error");
@@ -101,19 +104,22 @@ public class LoginViewController extends AbstractViewController {
         errorLabel.setVisible(true);
     }
 
-    private boolean checkFieldValidity(String username, String password) {
+    private boolean checkIfFieldsInvalid(String username, String password) {
         if (username.length() < 3) {
             showError("Invalid Username");
-            return false;
+            return true;
         }
 
         if (password.length() < 3) {
             showError("Invalid Password");
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
 
 }

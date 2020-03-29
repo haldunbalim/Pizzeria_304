@@ -1,6 +1,7 @@
 package Service;
 
 import Model.User;
+import Model.UserType;
 
 public class AuthenticationManager {
 
@@ -25,9 +26,9 @@ public class AuthenticationManager {
     // TODO: Login function
     // returns info about Authentication Status
     // record currentUser as a property of the class
-    public AuthStatus login(String email, String password){
-        currentUser = new User(email,password);
-        return AuthStatus.AUTH_FAILED;
+    public AuthStatus login(String username, String password) {
+        currentUser = new User(14132, username, password, "", "", "", UserType.MANAGER);
+        return AuthStatus.AUTH_SUCCESSFUL;
     }
 
 

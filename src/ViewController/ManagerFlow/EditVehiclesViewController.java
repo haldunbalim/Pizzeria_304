@@ -1,11 +1,11 @@
 package ViewController.ManagerFlow;
 
-import DataSource.DeliverableDataSource;
-import Model.Deliverable;
+import DataSource.VehicleDataSource;
+import Model.Vehicle;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
 import ViewController.AbstractViewController;
-import ViewModel.DeliverableEditableViewModel;
+import ViewModel.VehicleEditableViewModel;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -16,23 +16,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditDeliverablesViewController extends AbstractViewController implements TableModelListener {
-    private static EditDeliverablesViewController instance = new EditDeliverablesViewController();
+public class EditVehiclesViewController extends AbstractViewController implements TableModelListener {
+    private static EditVehiclesViewController instance = new EditVehiclesViewController();
     public JPanel mainPanel;
     JTable table;
-    EditDeliverablesTableModel tableModel;
-    DeliverableDataSource dataSource = DeliverableDataSource.getInstance();
-    private ArrayList<Deliverable> deliverables;
+    EditVehiclesTableModel tableModel;
+    VehicleDataSource dataSource = VehicleDataSource.getInstance();
+    private ArrayList<Vehicle> vehicles;
 
-    private EditDeliverablesViewController() {
-        deliverables = dataSource.getDeliverables();
+    private EditVehiclesViewController() {
+        vehicles = dataSource.getVehicles();
         configureTable();
         configureUI();
         mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
     }
 
-    public static EditDeliverablesViewController getInstance() {
+    public static EditVehiclesViewController getInstance() {
         return instance;
     }
 
@@ -45,35 +45,35 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         JPanel addNewPanel = new JPanel();
         addNewPanel.setLayout(new BoxLayout(addNewPanel, BoxLayout.X_AXIS));
 
-        JTextField nameField = new JTextField();
-        nameField.addFocusListener(new PlaceholderFocusListener(nameField, "Name"));
+        JTextField licensePlateField = new JTextField();
+        licensePlateField.addFocusListener(new PlaceholderFocusListener(licensePlateField, "License Plate"));
 
-        JTextField priceField = new JTextField();
-        priceField.addFocusListener(new PlaceholderFocusListener(priceField, "Price"));
+        JTextField brandField = new JTextField();
+        brandField.addFocusListener(new PlaceholderFocusListener(brandField, "Brand"));
+
+        JTextField modelField = new JTextField();
+        modelField.addFocusListener(new PlaceholderFocusListener(modelField, "Model"));
 
         JButton addButton = new JButton("Add");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = nameField.getText();
-                if (name.equals("")) {
+                String licensePlate = licensePlateField.getText();
+                String brand = brandField.getText();
+                String model = modelField.getText();
+                if (licensePlate.equals("License Plate") || brand.equals("Brand") || model.equals("Model")) {
                     return;
                 }
-                try {
-                    Double price = Double.parseDouble(priceField.getText());
-                    Deliverable deliverable = dataSource.createNewDeliverable(name, price);
-                    deliverables.add(deliverable);
-                    tableModel.add(deliverable);
-                } catch (NumberFormatException exception) {
-                    priceField.setText("");
-                    return;
-                }
+                Vehicle vehicle = dataSource.createNewVehicle(licensePlate, brand, model);
+                vehicles.add(vehicle);
+                tableModel.add(vehicle);
             }
         });
 
 
-        addNewPanel.add(nameField);
-        addNewPanel.add(priceField);
+        addNewPanel.add(licensePlateField);
+        addNewPanel.add(brandField);
+        addNewPanel.add(modelField);
         addNewPanel.add(addButton);
 
         mainPanel.add(addNewPanel, BorderLayout.SOUTH);
@@ -81,7 +81,7 @@ public class EditDeliverablesViewController extends AbstractViewController imple
 
 
     private void configureTable() {
-        tableModel = new EditDeliverablesTableModel(deliverables);
+        tableModel = new EditVehiclesTableModel(vehicles);
         table = new JTable(tableModel);
         table.getColumn("").setCellRenderer(new ButtonRenderer());
 
@@ -98,23 +98,27 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         if (column < 0)
             return;
         String columnName = tableModel.getColumnName(column);
-        // Object data = tableModel.getValueAt(row, column); may be needed
+
         if (columnName.equals("")) {
-            Deliverable removed = deliverables.remove(row);
+            Vehicle removed = vehicles.remove(row);
             tableModel.remove(row);
-            dataSource.removeDeliverableData(removed);
+            dataSource.removeVehicleData(removed);
             return;
         }
-        dataSource.updateDeliverableData(deliverables.get(row));
+        dataSource.updateVehicleData(vehicles.get(row));
     }
 
-    private class EditDeliverablesTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<DeliverableEditableViewModel> data = new ArrayList<>();
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
 
-        public EditDeliverablesTableModel(ArrayList<Deliverable> data) {
-            data.forEach(deliverable -> this.data.add(new DeliverableEditableViewModel(deliverable)));
-            this.columnNames = DeliverableEditableViewModel.columnNames;
+    private class EditVehiclesTableModel extends AbstractTableModel {
+        private String[] columnNames;
+        private ArrayList<VehicleEditableViewModel> data = new ArrayList<>();
+
+        public EditVehiclesTableModel(ArrayList<Vehicle> data) {
+            data.forEach(vehicle -> this.data.add(new VehicleEditableViewModel(vehicle)));
+            this.columnNames = VehicleEditableViewModel.columnNames;
         }
 
         public int getColumnCount() {
@@ -138,15 +142,7 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         }
 
         public Class getColumnClass(int col) {
-            switch (col) {
-                case 0:
-                    return String.class;
-                case 1:
-                    return Double.class;
-                case 2:
-                    return Boolean.class;
-            }
-            return null;
+            return col != getColumnCount() - 1 ? String.class : Boolean.class;
         }
 
         public boolean isCellEditable(int row, int col) {
@@ -156,10 +152,13 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         public void setValueAt(Object value, int row, int col) {
             switch (col) {
                 case 0:
-                    this.data.get(row).getModel().setName((String) value);
+                    this.data.get(row).getModel().setLicensePlate((String) value);
                     break;
                 case 1:
-                    this.data.get(row).getModel().setPrice((Double) value);
+                    this.data.get(row).getModel().setBrand((String) value);
+                    break;
+                case 2:
+                    this.data.get(row).getModel().setModel((String) value);
                     break;
             }
             fireTableCellUpdated(row, col);
@@ -170,14 +169,10 @@ public class EditDeliverablesViewController extends AbstractViewController imple
             this.fireTableRowsDeleted(row, row);
         }
 
-        public void add(Deliverable deliverable) {
-            this.data.add(new DeliverableEditableViewModel(deliverable));
+        public void add(Vehicle vehicle) {
+            this.data.add(new VehicleEditableViewModel(vehicle));
             this.fireTableDataChanged();
         }
-    }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
     }
 
 }

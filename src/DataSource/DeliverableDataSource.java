@@ -4,14 +4,14 @@ import Model.Deliverable;
 
 import java.util.ArrayList;
 
-public class DeliverablesDataSource {
+public class DeliverableDataSource extends AbstractDataSource {
 
-    private static DeliverablesDataSource instance = new DeliverablesDataSource();
+    private static DeliverableDataSource instance = new DeliverableDataSource();
 
-    private DeliverablesDataSource() {
+    private DeliverableDataSource() {
     }
 
-    public static DeliverablesDataSource getInstance() {
+    public static DeliverableDataSource getInstance() {
         return instance;
     }
 

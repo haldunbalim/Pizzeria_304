@@ -3,7 +3,9 @@ package database;
 public class DataBaseCredentials {
     public static final String EXCEPTION_TAG = "[EXCEPTION]";
     public static final String WARNING_TAG = "[WARNING]";
-    // NOTE:
+    // NOTE
+//    private static final String username = "ora_gulsena";
+//    private static final String password = "a97968358";
     private static final String username = "ora_hbalim";
     private static final String password = "a48908560";
 

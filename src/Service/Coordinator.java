@@ -2,6 +2,7 @@ package Service;
 
 
 import ViewController.LoginViewController;
+import database.DatabaseConnectionHandler;
 
 import javax.swing.*;
 
@@ -11,6 +12,8 @@ public class Coordinator {
     public ScreenEnum currentScreen;
     private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
 
+    public static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
+
     public static Coordinator getInstance() {
         return instance;
     }
@@ -18,7 +21,10 @@ public class Coordinator {
     private Coordinator() {
     }
 
-    public void start(){
+    public void start() {
+        // initialize database connection
+        dbHandler.connectToDatabase();
+
         frame.setVisible(true);
         frame.setTitle("Title");
         frame.setFocusable(true);
@@ -26,6 +32,7 @@ public class Coordinator {
         frame.setBounds(100, 100, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         frame.setResizable(false);
         openScreen(ScreenEnum.LOGIN);
+
     }
 
 

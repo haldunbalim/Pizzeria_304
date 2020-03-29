@@ -8,16 +8,28 @@ CREATE TABLE CustomerType
     membershipFee  Integer,
     renewalDate    date
 );
-
+ -- TODO: add user_type
 CREATE TABLE Users
 (
     user_id  INTEGER PRIMARY KEY,
     name     varchar(20) not null,
     surname  varchar(20) not null,
-    username varchar(40),
+    username varchar(40) not null UNIQUE,
     phoneNo  varchar(22),
-    password varchar(40) not null
+    password varchar(40) not null--,
+    -- user_type varchar(20)
 );
+
+-- if we want to add automatic incrementing to user_id
+-- CREATE SEQUENCE user_id_seq;
+-- create trigger user_bi
+--     before insert on Users
+--     FOR EACH ROW
+--     BEGIN
+--         Select user_id_seq.nextval
+--             INTO :new.user_id
+--         FROM dual;
+--     end;
 
 create table VehicleModelBrand
 (

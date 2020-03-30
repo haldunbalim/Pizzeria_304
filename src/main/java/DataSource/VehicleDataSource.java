@@ -86,38 +86,12 @@ public class VehicleDataSource extends AbstractDataSource {
 
     public Vehicle createNewVehicle(String licensePlate, String brand, String model) {
         licensePlate = licensePlate.toUpperCase();
-        brand = brand.toUpperCase();
-        model = model.toUpperCase();
+        brand = brand.toUpperCase().charAt(0) + brand.toLowerCase().substring(1);
+        model = model.toUpperCase().charAt(0) + model.toLowerCase().substring(1);
+
+        brand = checkBrandName(brand, model);
         Vehicle v = null;
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO VEHICLEMODELBRAND VALUES (?, ?)");
-            ps.setString(1, model);
-            ps.setString(2, brand);
 
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.modelExists);
-            try {
-                // get the correct brand name
-                Statement stmt = connection.createStatement();
-                String query = String.format("SELECT brand FROM VEHICLEMODELBRAND WHERE model ='%s';",
-                        model);
-                ResultSet rs = stmt.executeQuery(query);
-                while (rs.next()) {
-                    brand = rs.getString(1);
-                }
-                // TODO: after addition brand name is still incorrect although added correctly
-                rs.close();
-                stmt.close();
-            } catch (SQLException s) {
-                System.out.println(DataBaseCredentials.EXCEPTION_TAG + s.getMessage());
-            }
-
-        } catch (SQLException e) {
-            //System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials);
-            return null;
-        }
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO VEHICLE VALUES (?, ?)");
             ps.setString(1, licensePlate);
@@ -133,6 +107,43 @@ public class VehicleDataSource extends AbstractDataSource {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.insertionError);
         }
         return v;
+    }
+
+    public String checkBrandName(String brand, String model) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO VEHICLEMODELBRAND VALUES (?, ?)");
+            ps.setString(1, model);
+            ps.setString(2, brand);
+
+            ps.executeUpdate();
+            ps.close();
+
+            return brand;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.modelExists);
+            try {
+                // get the correct brand name
+                Statement stmt = connection.createStatement();
+                String query = String.format("SELECT brand FROM VEHICLEMODELBRAND WHERE model ='%s'",
+                        model);
+                ResultSet rs = stmt.executeQuery(query);
+
+                while (rs.next()) {
+                    brand = rs.getString(1);
+                }
+                // TODO: after addition brand name is still incorrect although added correctly
+                rs.close();
+                stmt.close();
+                return brand;
+            } catch (SQLException s) {
+                System.out.println(DataBaseCredentials.EXCEPTION_TAG + s.getMessage());
+            }
+
+        } catch (SQLException e) {
+            //System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials);
+            return "";
+        }
+        return brand;
     }
 
 }

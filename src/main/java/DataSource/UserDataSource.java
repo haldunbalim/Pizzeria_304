@@ -40,7 +40,7 @@ public class UserDataSource {
                         "name ='%s'," +
                         "surname ='%s'," +
                         "phoneNumber = '%s'" +
-                        "WHERE user_id=%d;",
+                        "WHERE user_id=%d",
                         username,
                         password,
                         name,

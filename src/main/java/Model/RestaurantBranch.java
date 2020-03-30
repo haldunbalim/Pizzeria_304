@@ -1,6 +1,6 @@
 package Model;
 
-public class RestaurantBranch {
+public class RestaurantBranch extends AbstractModel {
     private long bid;
     private String name;
     private Address address;

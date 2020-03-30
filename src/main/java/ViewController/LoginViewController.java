@@ -2,7 +2,10 @@ package ViewController;
 
 import Model.UserType;
 import Reusable.PlaceholderFocusListener;
-import Service.*;
+import Service.AuthStatus;
+import Service.AuthenticationManager;
+import Service.Coordinator;
+import Service.ScreenEnum;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,11 +23,14 @@ public class LoginViewController extends AbstractViewController {
     private JTextField passwordTextField;
 
     private LoginViewController() {
+        configureUI();
+        addUIFunctionality();
+    }
+
+    public void configureUI() {
         errorLabel.setText("");
-        mainPanel.setBounds(50, 50, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         usernameTextField.addFocusListener(new PlaceholderFocusListener(usernameTextField, "Enter Username"));
         passwordTextField.addFocusListener(new PlaceholderFocusListener(passwordTextField, "Enter Password"));
-        addUIFunctionality();
     }
 
     public static LoginViewController getInstance() {
@@ -117,9 +123,4 @@ public class LoginViewController extends AbstractViewController {
 
         return false;
     }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
-
 }

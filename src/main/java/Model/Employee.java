@@ -1,4 +1,4 @@
 package Model;
 
-public class Employee {
+public class Employee extends AbstractModel {
 }

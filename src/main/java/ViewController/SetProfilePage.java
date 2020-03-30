@@ -33,7 +33,6 @@ public class SetProfilePage extends AbstractViewController {
         for (String city : cities) {
             cityComboBox.addItem(city);
         }
-        configureUI();
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

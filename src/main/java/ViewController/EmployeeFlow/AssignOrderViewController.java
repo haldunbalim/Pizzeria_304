@@ -5,12 +5,12 @@ import Model.Order;
 import Reusable.ButtonRenderer;
 import Reusable.WrapTextCellRenderer;
 import ViewController.AbstractViewController;
+import ViewController.MyAbstractTableModel;
 import ViewModel.OrderEmployeeViewModel;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -21,14 +21,9 @@ public class AssignOrderViewController extends AbstractViewController implements
     private ArrayList<Order> orders;
     private JTable table;
     private AssignOrderTableModel tableModel;
-    private AssignOrderViewController() {
-        configureUI();
-        mainPanel.setFocusable(true);
-        table.getModel().addTableModelListener(this);
-    }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
+    private AssignOrderViewController() {
+        table.getModel().addTableModelListener(this);
     }
 
     public static AssignOrderViewController getInstance() {
@@ -61,33 +56,10 @@ public class AssignOrderViewController extends AbstractViewController implements
         EmployeeTabs.getInstance().openAssignVehicle();
     }
 
-    private class AssignOrderTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<OrderEmployeeViewModel> data = new ArrayList<>();
-
+    private class AssignOrderTableModel extends MyAbstractTableModel {
         public AssignOrderTableModel(ArrayList<Order> data) {
             data.forEach(deliverable -> this.data.add(new OrderEmployeeViewModel(deliverable)));
             this.columnNames = OrderEmployeeViewModel.columnNames;
-        }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
-        }
-
-        public Class getColumnClass(int col) {
-            return OrderEmployeeViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

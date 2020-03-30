@@ -23,7 +23,6 @@ public class ProfileViewController extends AbstractViewController {
     private User currentUser = AuthenticationManager.getInstance().getCurrentUser();
 
     private ProfileViewController() {
-        configureUI();
     }
 
     public static ProfileViewController getInstance() {

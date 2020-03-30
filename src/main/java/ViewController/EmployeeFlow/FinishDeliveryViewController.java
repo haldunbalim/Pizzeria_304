@@ -20,7 +20,6 @@ public class FinishDeliveryViewController extends AbstractViewController {
     private JButton deliverButton;
 
     private FinishDeliveryViewController() {
-        configureUI();
         deliverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,7 +44,4 @@ public class FinishDeliveryViewController extends AbstractViewController {
         vehicleLicensePlateLabel.setText(selectedVehicle.getLicensePlate());
     }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
 }

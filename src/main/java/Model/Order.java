@@ -3,7 +3,7 @@ package Model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Order {
+public class Order extends AbstractModel {
 
     private long oid;
     private long date;

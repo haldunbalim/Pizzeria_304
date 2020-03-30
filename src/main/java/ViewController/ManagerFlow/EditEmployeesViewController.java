@@ -4,30 +4,26 @@ import DataSource.EmployeesDataSource;
 import Model.User;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
-import ViewController.AbstractViewController;
+import ViewController.AbstractTableViewController;
+import ViewController.MyAbstractTableModel;
 import ViewModel.UserEditableViewModel;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditEmployeesViewController extends AbstractViewController implements TableModelListener {
+public class EditEmployeesViewController extends AbstractTableViewController implements TableModelListener {
     private static EditEmployeesViewController instance = new EditEmployeesViewController();
     private JPanel mainPanel;
-    private JTable table;
-    private EditEmployeesTableModel tableModel;
     private EmployeesDataSource dataSource = EmployeesDataSource.getInstance();
     private ArrayList<User> employees;
 
     private EditEmployeesViewController() {
         employees = dataSource.getEmployees();
-        configureUI();
-        mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
     }
 
@@ -35,7 +31,7 @@ public class EditEmployeesViewController extends AbstractViewController implemen
         return instance;
     }
 
-    private void configureUI() {
+    public void configureUI() {
         configureTable();
         configureAddPanel();
     }
@@ -72,16 +68,6 @@ public class EditEmployeesViewController extends AbstractViewController implemen
     }
 
 
-    private void configureTable() {
-        tableModel = new EditEmployeesTableModel(employees);
-        table = new JTable(tableModel);
-        table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-    }
-
     @Override
     public void tableChanged(TableModelEvent e) {
         int row = e.getFirstRow();
@@ -95,48 +81,22 @@ public class EditEmployeesViewController extends AbstractViewController implemen
         dataSource.removeUserData(removed);
     }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
+    private void configureTable() {
+        tableModel = new EditEmployeesTableModel(employees);
+        table = new JTable(tableModel);
+        table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
+
+        addTable();
     }
 
-    private class EditEmployeesTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<UserEditableViewModel> data = new ArrayList<>();
-
+    private class EditEmployeesTableModel extends MyAbstractTableModel {
         EditEmployeesTableModel(ArrayList<User> data) {
             data.forEach(user -> this.data.add(new UserEditableViewModel(user)));
             this.columnNames = UserEditableViewModel.columnNames;
         }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
-        }
-
-        public Class getColumnClass(int col) {
-            return UserEditableViewModel.getColumnClassAt(col);
-        }
-
         public boolean isCellEditable(int row, int col) {
             return col == getColumnCount() - 1;
         }
-
-        public void remove(int row) {
-            this.data.remove(row);
-            this.fireTableRowsDeleted(row, row);
-        }
-
         public void setValueAt(Object value, int row, int col) {
             fireTableCellUpdated(row, col);
         }

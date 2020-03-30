@@ -2,14 +2,14 @@ package ViewModel;
 
 import Model.Deliverable;
 
-public class DeliverableEditableViewModel {
+public class DeliverableEditableViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Price", ""};
-    private Deliverable model;
+    protected Deliverable model;
 
     public DeliverableEditableViewModel(Deliverable model) {
-        this.model = model;
+        super(model);
     }
 
     public Object getColumnView(int col) {
@@ -24,6 +24,11 @@ public class DeliverableEditableViewModel {
         return null;
     }
 
+    @Override
+    public void setValueAt(int col, Object value) {
+
+    }
+
     public static Class getColumnClassAt(int col) {
         switch (col) {
             case 0:
@@ -34,10 +39,6 @@ public class DeliverableEditableViewModel {
                 return Boolean.class;
         }
         return null;
-    }
-
-    public Deliverable getModel() {
-        return model;
     }
 
 

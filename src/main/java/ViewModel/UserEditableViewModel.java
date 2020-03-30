@@ -2,14 +2,14 @@ package ViewModel;
 
 import Model.User;
 
-public class UserEditableViewModel {
+public class UserEditableViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Surname", "Phone Number", ""};
-    private User model;
+    protected User model;
 
     public UserEditableViewModel(User model) {
-        this.model = model;
+        super(model);
     }
 
     public Object getColumnView(int col) {
@@ -26,11 +26,12 @@ public class UserEditableViewModel {
         return null;
     }
 
-    public static Class getColumnClassAt(int col) {
-        return col != 3 ? String.class : Boolean.class;
+    @Override
+    public void setValueAt(int col, Object value) {
+
     }
 
-    public User getModel() {
-        return model;
+    public static Class getColumnClassAt(int col) {
+        return col != 3 ? String.class : Boolean.class;
     }
 }

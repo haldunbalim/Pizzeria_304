@@ -4,10 +4,10 @@ import DataSource.OrdersDataSource;
 import Model.Order;
 import Reusable.WrapTextCellRenderer;
 import ViewController.AbstractViewController;
+import ViewController.MyAbstractTableModel;
 import ViewModel.OrderCustomerViewModel;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -20,12 +20,6 @@ public class ViewOrdersViewController extends AbstractViewController {
     private ViewOrdersTableModel tableModel;
 
     private ViewOrdersViewController() {
-        configureUI();
-        mainPanel.setFocusable(true);
-    }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
     }
 
     public static ViewOrdersViewController getInstance() {
@@ -49,29 +43,10 @@ public class ViewOrdersViewController extends AbstractViewController {
         }
     }
 
-    private class ViewOrdersTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<OrderCustomerViewModel> data = new ArrayList<>();
-
+    private class ViewOrdersTableModel extends MyAbstractTableModel {
         public ViewOrdersTableModel(ArrayList<Order> data) {
             data.forEach(deliverable -> this.data.add(new OrderCustomerViewModel(deliverable)));
             this.columnNames = OrderCustomerViewModel.columnNames;
-        }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
         }
 
         public Class getColumnClass(int col) {

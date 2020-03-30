@@ -54,6 +54,7 @@ public class UserDataSource {
 
             }
             connection.commit();
+            stmt.close();
 
         } catch (SQLIntegrityConstraintViolationException e) {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.userNameTaken);

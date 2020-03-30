@@ -18,7 +18,7 @@ public class AuthenticationManager {
     private DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
 
     private AuthenticationManager() {
-        dbHandler.connectToDatabase();
+        //dbHandler.connectToDatabase();
     }
 
     public static AuthenticationManager getInstance() {
@@ -39,6 +39,7 @@ public class AuthenticationManager {
                     newID, "name", "surname", username, password);
             stmt.execute(statement);
             c.commit();
+            stmt.close();
 
             return AuthStatus.NEW_REGISTRATION;
         } catch (SQLException e) {
@@ -61,6 +62,8 @@ public class AuthenticationManager {
             while (rs.next()) {
                 userPassword = rs.getString("password");
             }
+            rs.close();
+            stmt.close();
 
             if (password.equalsIgnoreCase(userPassword)) {
                 //currentUser = new User(username, password);
@@ -94,6 +97,8 @@ public class AuthenticationManager {
                 nextID = rs.getLong("user_id") + 1;
                 return nextID;
             }
+            rs.close();
+            stmt.close();
 
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());

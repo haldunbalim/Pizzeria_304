@@ -1,23 +1,26 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Order {
 
     private long oid;
     private long date;
-    private ArrayList<Deliverable> deliverables;
+    private HashMap<Deliverable, Integer> deliverables = new HashMap<>();
     private User orderer;
     private OrderState orderState;
 
-
-    // TODO: Make order deliverables a counter dct
     public Order(long oid, User orderer, long date, ArrayList<Deliverable> deliverables, OrderState orderState) {
         this.oid = oid;
         this.orderer = orderer;
         this.date = date;
-        this.deliverables = deliverables;
         this.orderState = orderState;
+        for (Deliverable deliverable : deliverables) {
+            if (!this.deliverables.containsKey(deliverable))
+                this.deliverables.put(deliverable, 0);
+            this.deliverables.put(deliverable, this.deliverables.get(deliverable) + 1);
+        }
     }
 
     public long getOid() {
@@ -36,14 +39,6 @@ public class Order {
         this.date = date;
     }
 
-    public ArrayList<Deliverable> getDeliverables() {
-        return deliverables;
-    }
-
-    public void setDeliverables(ArrayList<Deliverable> deliverables) {
-        this.deliverables = deliverables;
-    }
-
     public User getOrderer() {
         return orderer;
     }
@@ -54,19 +49,26 @@ public class Order {
 
     public String orderedItemsText() {
         String st = "";
-        for (Deliverable deliverable : deliverables) {
-            st += deliverable.toString() + "\n";
+        for (Deliverable deliverable : deliverables.keySet()) {
+            st += deliverable.toString() + " x" + deliverables.get(deliverable) + "\n";
         }
         return st;
     }
 
     public double getTotalPrice() {
+        return getTotalPriceWithoutDiscount() * (1 - orderer.getMembershipType().getDiscountRate());
+    }
+
+    public double getTotalPriceWithoutDiscount() {
         double price = 0;
-        for (Deliverable deliverable : deliverables) {
-            price += deliverable.getPrice();
+        for (Deliverable deliverable : deliverables.keySet()) {
+            price += deliverable.getPrice() * deliverables.get(deliverable);
         }
-        price *= (1 - orderer.getMembershipType().getDiscountRate());
         return price;
+    }
+
+    public Integer getUniqueItemCount() {
+        return deliverables.keySet().size();
     }
 
     public OrderState getOrderState() {

@@ -20,9 +20,9 @@ import java.util.ArrayList;
 public class AssignVehicleViewController extends AbstractViewController implements TableModelListener {
     private static AssignVehicleViewController instance = new AssignVehicleViewController();
     private JPanel mainPanel;
-    JTable table;
-    AssignVehiclesTableModel tableModel;
-    VehicleDataSource dataSource = VehicleDataSource.getInstance();
+    private JTable table;
+    private AssignVehiclesTableModel tableModel;
+    private VehicleDataSource dataSource = VehicleDataSource.getInstance();
     private ArrayList<Vehicle> vehicles;
 
     private AssignVehicleViewController() {
@@ -91,11 +91,7 @@ public class AssignVehicleViewController extends AbstractViewController implemen
         }
 
         public int getRowCount() {
-            if (data.size() <= 0) {
-                return 0;
-            } else {
-                return data.size();
-            }
+            return data.size();
         }
 
         public String getColumnName(int col) {
@@ -107,7 +103,7 @@ public class AssignVehicleViewController extends AbstractViewController implemen
         }
 
         public Class getColumnClass(int col) {
-            return col == 3 ? Boolean.class : String.class;
+            return VehicleViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

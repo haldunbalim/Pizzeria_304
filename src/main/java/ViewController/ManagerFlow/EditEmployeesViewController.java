@@ -113,11 +113,7 @@ public class EditEmployeesViewController extends AbstractViewController implemen
         }
 
         public int getRowCount() {
-            if (data.size() <= 0) {
-                return 0;
-            } else {
-                return data.size();
-            }
+            return data.size();
         }
 
         public String getColumnName(int col) {
@@ -129,7 +125,7 @@ public class EditEmployeesViewController extends AbstractViewController implemen
         }
 
         public Class getColumnClass(int col) {
-            return col != getColumnCount() - 1 ? String.class : Boolean.class;
+            return UserEditableViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

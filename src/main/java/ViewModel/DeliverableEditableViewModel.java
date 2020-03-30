@@ -4,6 +4,7 @@ import Model.Deliverable;
 
 public class DeliverableEditableViewModel {
 
+
     public static String[] columnNames = {"Name", "Price", ""};
     private Deliverable model;
 
@@ -23,7 +24,21 @@ public class DeliverableEditableViewModel {
         return null;
     }
 
+    public static Class getColumnClassAt(int col) {
+        switch (col) {
+            case 0:
+                return String.class;
+            case 1:
+                return Double.class;
+            case 2:
+                return Boolean.class;
+        }
+        return null;
+    }
+
     public Deliverable getModel() {
         return model;
     }
+
+
 }

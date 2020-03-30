@@ -26,6 +26,10 @@ public class UserEditableViewModel {
         return null;
     }
 
+    public static Class getColumnClassAt(int col) {
+        return col != 3 ? String.class : Boolean.class;
+    }
+
     public User getModel() {
         return model;
     }

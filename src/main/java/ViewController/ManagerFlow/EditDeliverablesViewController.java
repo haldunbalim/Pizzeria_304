@@ -19,9 +19,9 @@ import java.util.ArrayList;
 public class EditDeliverablesViewController extends AbstractViewController implements TableModelListener {
     private static EditDeliverablesViewController instance = new EditDeliverablesViewController();
     private JPanel mainPanel;
-    JTable table;
-    EditDeliverablesTableModel tableModel;
-    DeliverableDataSource dataSource = DeliverableDataSource.getInstance();
+    private JTable table;
+    private EditDeliverablesTableModel tableModel;
+    private DeliverableDataSource dataSource = DeliverableDataSource.getInstance();
     private ArrayList<Deliverable> deliverables;
 
     private EditDeliverablesViewController() {
@@ -125,11 +125,7 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         }
 
         public int getRowCount() {
-            if (data.size() <= 0) {
-                return 0;
-            } else {
-                return data.size();
-            }
+            return data.size();
         }
 
         public String getColumnName(int col) {
@@ -141,15 +137,7 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         }
 
         public Class getColumnClass(int col) {
-            switch (col) {
-                case 0:
-                    return String.class;
-                case 1:
-                    return Double.class;
-                case 2:
-                    return Boolean.class;
-            }
-            return null;
+            return DeliverableEditableViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

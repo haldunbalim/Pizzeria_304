@@ -28,7 +28,7 @@ public class User {
         setMembershipType();
     }
 
-    public void setMembershipType() {
+    private void setMembershipType() {
         if (membershipPoints < 5000) {
             membershipType = MembershipType.BRONZE;
         } else if (membershipPoints < 10000) {
@@ -44,6 +44,7 @@ public class User {
 
     public void setMembershipPoints(int membershipPoints) {
         this.membershipPoints = membershipPoints;
+        setMembershipType();
     }
 
     public long getUID() {

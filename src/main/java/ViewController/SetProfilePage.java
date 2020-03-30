@@ -5,6 +5,8 @@ import Model.Address;
 import Model.User;
 import Model.UserType;
 import Service.AuthenticationManager;
+import Service.Coordinator;
+import Service.ScreenEnum;
 import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
 
@@ -41,11 +43,16 @@ public class SetProfilePage extends AbstractViewController {
                     currentUser.setAddress(new Address(cityComboBox.getSelectedItem().toString(), streetNameTextField.getText(), postalCodeTextField.getText(), Integer.parseInt(houseNumberTextField.getText())));
                     currentUser.setPhoneNumber(phoneNumberTextField.getText());
                     UserDataSource.getInstance().updateUserFields(currentUser);
-                    // TODO: Additional case if it was open for the first time to show tab
                     if (currentUser.getUserType() == UserType.CUSTOMER) {
-                        CustomerTabs.getInstance().closeProfileEditingMode();
+                        if (Coordinator.getInstance().getCurrentScreen() == ScreenEnum.SET_PROFILE_PAGE)
+                            Coordinator.getInstance().openScreen(ScreenEnum.CUSTOMER_TABS);
+                        else
+                            CustomerTabs.getInstance().closeProfileEditingMode();
                     } else {
-                        EmployeeTabs.getInstance().closeProfileEditingMode();
+                        if (Coordinator.getInstance().getCurrentScreen() == ScreenEnum.SET_PROFILE_PAGE)
+                            Coordinator.getInstance().openScreen(ScreenEnum.EMPLOYEE_TABS);
+                        else
+                            EmployeeTabs.getInstance().closeProfileEditingMode();
                     }
                 }
             }

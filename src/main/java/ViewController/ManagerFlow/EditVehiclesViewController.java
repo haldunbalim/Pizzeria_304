@@ -82,7 +82,6 @@ public class EditVehiclesViewController extends AbstractViewController implement
     private void configureTable() {
         tableModel = new EditVehiclesTableModel(vehicles);
         table = new JTable(tableModel);
-        // TODO: MAake combobox renderer for model and brand
         table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -126,11 +125,7 @@ public class EditVehiclesViewController extends AbstractViewController implement
         }
 
         public int getRowCount() {
-            if (data.size() <= 0) {
-                return 0;
-            } else {
-                return data.size();
-            }
+            return data.size();
         }
 
         public String getColumnName(int col) {
@@ -142,7 +137,7 @@ public class EditVehiclesViewController extends AbstractViewController implement
         }
 
         public Class getColumnClass(int col) {
-            return col != getColumnCount() - 1 ? String.class : Boolean.class;
+            return VehicleViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

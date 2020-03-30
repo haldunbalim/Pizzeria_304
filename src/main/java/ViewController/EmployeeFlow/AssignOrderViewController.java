@@ -13,15 +13,14 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class AssignOrderViewController extends AbstractViewController implements TableModelListener {
     private static AssignOrderViewController instance = new AssignOrderViewController();
     private JPanel mainPanel;
-    OrdersDataSource dataSource = OrdersDataSource.getInstance();
-    ArrayList<Order> orders;
-    JTable table;
-    AssignOrderTableModel tableModel;
+    private OrdersDataSource dataSource = OrdersDataSource.getInstance();
+    private ArrayList<Order> orders;
+    private JTable table;
+    private AssignOrderTableModel tableModel;
     private AssignOrderViewController() {
         configureUI();
         mainPanel.setFocusable(true);
@@ -50,7 +49,7 @@ public class AssignOrderViewController extends AbstractViewController implements
         table.setFillsViewportHeight(true);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         for (int i = 0; i < orders.size(); i++) {
-            table.setRowHeight(i, orders.get(i).getDeliverables().size() * 17);
+            table.setRowHeight(i, orders.get(i).getUniqueItemCount() * 17);
         }
     }
 
@@ -76,11 +75,7 @@ public class AssignOrderViewController extends AbstractViewController implements
         }
 
         public int getRowCount() {
-            if (data.size() <= 0) {
-                return 0;
-            } else {
-                return data.size();
-            }
+            return data.size();
         }
 
         public String getColumnName(int col) {
@@ -92,18 +87,7 @@ public class AssignOrderViewController extends AbstractViewController implements
         }
 
         public Class getColumnClass(int col) {
-            switch (col) {
-                case 0:
-                case 1:
-                    return String.class;
-                case 2:
-                    return Double.class;
-                case 3:
-                    return Date.class;
-                case 4:
-                    return Boolean.class;
-            }
-            return null;
+            return OrderEmployeeViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

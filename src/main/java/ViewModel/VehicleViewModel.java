@@ -25,6 +25,10 @@ public class VehicleViewModel {
         return null;
     }
 
+    public static Class getColumnClassAt(int col) {
+        return col == 3 ? Boolean.class : String.class;
+    }
+
     public Vehicle getModel() {
         return model;
     }

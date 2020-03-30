@@ -1,10 +1,6 @@
 package Service;
 
 
-import Model.Address;
-import Model.RestaurantBranch;
-import Model.User;
-import Model.UserType;
 import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
 import ViewController.LoginViewController;
@@ -14,7 +10,7 @@ import ViewController.SetProfilePage;
 import javax.swing.*;
 
 public class Coordinator {
-    private static final ScreenEnum initialPage = ScreenEnum.EMPLOYEE_TABS;
+    private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
     private static Coordinator instance = new Coordinator();
     private JFrame frame = new JFrame();
     private ScreenEnum currentScreen;
@@ -32,8 +28,6 @@ public class Coordinator {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(100, 100, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         frame.setResizable(false);
-        //following line is for testing
-        AuthenticationManager.getInstance().setCurrentUser(new User(123, "adf", "adfs", "adfa", "dfa", "adf", new Address("Istanbul", "adf", "af", 14), UserType.CUSTOMER, 15, new RestaurantBranch(132413, "fdafds", new Address("dsf", "adf", "adfa", 1234))));
         openScreen(initialPage);
     }
 
@@ -63,5 +57,8 @@ public class Coordinator {
         currentScreen = screen;
     }
 
+    public ScreenEnum getCurrentScreen() {
+        return currentScreen;
+    }
 }
 

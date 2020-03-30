@@ -31,7 +31,7 @@ public class AuthenticationManager {
     // call login after signUp is successfully complete
     public AuthStatus signUp(String username, String password) {
         try {
-            Connection c = dbHandler.getConnection();
+            Connection c = DatabaseConnectionHandler.getConnection();
             Statement stmt = c.createStatement();
 
             long newID = assignUserIdD();
@@ -48,12 +48,11 @@ public class AuthenticationManager {
         }
     }
 
-    // TODO: Login function
     // returns info about Authentication Status
     // record currentUser as a property of the class
     public AuthStatus login(String username, String password) {
         try {
-            Statement stmt = dbHandler.getConnection().createStatement();
+            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
 
             String statement = "SELECT password FROM USERS WHERE USERNAME='" + username + "'";
             ResultSet rs = stmt.executeQuery(statement);
@@ -87,7 +86,7 @@ public class AuthenticationManager {
     // TODO: replace with authomatic incrementing
     public long assignUserIdD() {
         try {
-            Statement stmt = dbHandler.getConnection().createStatement();
+            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
 
             String statement = "Select user_id from Users Order By user_id DESC";
             ResultSet rs = stmt.executeQuery(statement);

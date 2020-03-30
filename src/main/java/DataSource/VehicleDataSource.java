@@ -12,7 +12,7 @@ public class VehicleDataSource extends AbstractDataSource {
 
     private static VehicleDataSource instance = new VehicleDataSource();
     private static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
-    private static Connection connection = dbHandler.getConnection();
+    private static Connection connection = DatabaseConnectionHandler.getConnection();
 
 
     private VehicleDataSource() {
@@ -22,7 +22,7 @@ public class VehicleDataSource extends AbstractDataSource {
         return instance;
     }
 
-    // TODO: Same as DeliverableDataSource
+
 
     // access current user via LoginManager
     public ArrayList<Vehicle> getVehicles() {
@@ -36,7 +36,8 @@ public class VehicleDataSource extends AbstractDataSource {
                 String licensePlate = rs.getString("license_plate");
                 String model = rs.getString("model");
                 String brand = rs.getString("brand");
-                list.add(new Vehicle(licensePlate, model, brand));
+                // TODO: Available Field added to vehicle
+                list.add(new Vehicle(licensePlate, model, brand, true));
             }
             rs.close();
             stmt.close();
@@ -100,7 +101,8 @@ public class VehicleDataSource extends AbstractDataSource {
             ps.executeUpdate();
             connection.commit();
             ps.close();
-            v = new Vehicle(licensePlate, model, brand);
+            // TODO: Available Field added to vehicle
+            v = new Vehicle(licensePlate, model, brand, true);
         } catch (SQLIntegrityConstraintViolationException e) {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.licenseExists);
         } catch (SQLException e) {

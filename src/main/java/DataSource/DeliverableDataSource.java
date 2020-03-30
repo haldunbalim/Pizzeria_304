@@ -12,7 +12,7 @@ public class DeliverableDataSource extends AbstractDataSource {
 
     private static DeliverableDataSource instance = new DeliverableDataSource();
     private static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
-    private static Connection connection = dbHandler.getConnection();
+    private static Connection connection = DatabaseConnectionHandler.getConnection();
 
     private DeliverableDataSource() {
     }
@@ -22,7 +22,7 @@ public class DeliverableDataSource extends AbstractDataSource {
     }
 
 
-    // TODO: returns an arrayList of Deliverables for currentUser's affiliated restaurant
+    // returns an arrayList of Deliverables for currentUser's affiliated restaurant
     // access current user via LoginManager
     public ArrayList<Deliverable> getDeliverables() {
         ArrayList<Deliverable> list = new ArrayList<>();
@@ -45,7 +45,7 @@ public class DeliverableDataSource extends AbstractDataSource {
         return list;
     }
 
-    // TODO: given an updated deliverable model saves the update in db
+    // given an updated deliverable model saves the update in db
     public void updateDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
         String name = deliverable.getName();
@@ -68,7 +68,7 @@ public class DeliverableDataSource extends AbstractDataSource {
         }
     }
 
-    // TODO: given an deliverable model removes it from the db
+    // given an deliverable model removes it from the db
     public void removeDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
         try {
@@ -87,7 +87,7 @@ public class DeliverableDataSource extends AbstractDataSource {
         }
     }
 
-    // TODO: given props create a new deliverable in db and return
+    // given props create a new deliverable in db and return
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
 

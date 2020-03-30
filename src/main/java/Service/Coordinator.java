@@ -6,14 +6,16 @@ import ViewController.EmployeeFlow.EmployeeTabs;
 import ViewController.LoginViewController;
 import ViewController.ManagerFlow.ManagerTabs;
 import ViewController.SetProfilePage;
+import database.DatabaseConnectionHandler;
 
 import javax.swing.*;
 
 public class Coordinator {
-    private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
+    private static final ScreenEnum initialPage = ScreenEnum.MANAGER_TABS;
     private static Coordinator instance = new Coordinator();
     private JFrame frame = new JFrame();
     private ScreenEnum currentScreen;
+    DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
 
     private Coordinator() {
     }
@@ -23,6 +25,8 @@ public class Coordinator {
     }
 
     public void start() {
+        dbHandler.connectToDatabase();
+
         frame.setVisible(true);
         frame.setTitle("Pizzeria");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

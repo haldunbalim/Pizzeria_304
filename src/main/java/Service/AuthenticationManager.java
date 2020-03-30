@@ -18,6 +18,7 @@ public class AuthenticationManager {
     private DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
 
     private AuthenticationManager() {
+        //dbHandler.connectToDatabase();
     }
 
     public static AuthenticationManager getInstance() {
@@ -30,7 +31,7 @@ public class AuthenticationManager {
     // call login after signUp is successfully complete
     public AuthStatus signUp(String username, String password) {
         try {
-            Connection c = DatabaseConnectionHandler.getConnection();
+            Connection c = dbHandler.getConnection();
             Statement stmt = c.createStatement();
 
             long newID = assignUserIdD();
@@ -38,6 +39,7 @@ public class AuthenticationManager {
                     newID, "name", "surname", username, password);
             stmt.execute(statement);
             c.commit();
+            stmt.close();
 
             return AuthStatus.NEW_REGISTRATION;
         } catch (SQLException e) {
@@ -51,7 +53,7 @@ public class AuthenticationManager {
     // record currentUser as a property of the class
     public AuthStatus login(String username, String password) {
         try {
-            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
+            Statement stmt = dbHandler.getConnection().createStatement();
 
             String statement = "SELECT password FROM USERS WHERE USERNAME='" + username + "'";
             ResultSet rs = stmt.executeQuery(statement);
@@ -60,6 +62,8 @@ public class AuthenticationManager {
             while (rs.next()) {
                 userPassword = rs.getString("password");
             }
+            rs.close();
+            stmt.close();
 
             if (password.equalsIgnoreCase(userPassword)) {
                 //currentUser = new User(username, password);
@@ -83,7 +87,7 @@ public class AuthenticationManager {
     // TODO: replace with authomatic incrementing
     public long assignUserIdD() {
         try {
-            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
+            Statement stmt = dbHandler.getConnection().createStatement();
 
             String statement = "Select user_id from Users Order By user_id DESC";
             ResultSet rs = stmt.executeQuery(statement);
@@ -93,6 +97,8 @@ public class AuthenticationManager {
                 nextID = rs.getLong("user_id") + 1;
                 return nextID;
             }
+            rs.close();
+            stmt.close();
 
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -100,8 +106,4 @@ public class AuthenticationManager {
         return -1;
     }
 
-    //for testing
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
 }

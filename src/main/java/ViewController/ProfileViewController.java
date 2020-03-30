@@ -3,8 +3,8 @@ package ViewController;
 import Model.User;
 import Model.UserType;
 import Service.AuthenticationManager;
+import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
-import ViewController.UserFlow.UserTabs;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -30,7 +30,7 @@ public class ProfileViewController extends AbstractViewController {
         return instance;
     }
 
-    private void configureUI() {
+    public void configureUI() {
         configureLabels();
         configureForUser();
     }
@@ -44,7 +44,7 @@ public class ProfileViewController extends AbstractViewController {
     }
 
     private void configureLabels() {
-        headerLabel.setText("Wellcome, " + currentUser.getName() + " " + currentUser.getSurname());
+        headerLabel.setText("Welcome, " + currentUser.getName() + " " + currentUser.getSurname());
         usernameLabel.setText(currentUser.getUsername());
         membershipLabel.setText(currentUser.getPhoneNumber());
         addressLabel.setText(currentUser.getAddress().toString());
@@ -52,8 +52,8 @@ public class ProfileViewController extends AbstractViewController {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (currentUser.getUserType() == UserType.EMPLOYEE) {
-                    UserTabs.getInstance().openProfileEditingMode();
+                if (currentUser.getUserType() == UserType.CUSTOMER) {
+                    CustomerTabs.getInstance().openProfileEditingMode();
                 } else {
                     EmployeeTabs.getInstance().openProfileEditingMode();
                 }

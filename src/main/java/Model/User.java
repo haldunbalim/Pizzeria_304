@@ -2,7 +2,7 @@ package Model;
 
 public class User {
 
-    private int UID;
+    private long UID;
     private String username;
     private String password;
     private String name;
@@ -12,8 +12,9 @@ public class User {
     private UserType userType;
     private MembershipType membershipType;
     private int membershipPoints;
+    private RestaurantBranch affiliatedBranch;
 
-    public User(int UID, String username, String password, String name, String surname, String phoneNumber, Address address, UserType userType, int membershipPoints) {
+    public User(long UID, String username, String password, String name, String surname, String phoneNumber, Address address, UserType userType, int membershipPoints, RestaurantBranch affiliatedBranch) {
         this.UID = UID;
         this.username = username;
         this.password = password;
@@ -23,6 +24,7 @@ public class User {
         this.address = address;
         this.userType = userType;
         this.membershipPoints = membershipPoints;
+        this.affiliatedBranch = affiliatedBranch;
         setMembershipType();
     }
 
@@ -44,11 +46,11 @@ public class User {
         this.membershipPoints = membershipPoints;
     }
 
-    public int getUID() {
+    public long getUID() {
         return UID;
     }
 
-    public void setUID(int UID) {
+    public void setUID(long UID) {
         this.UID = UID;
     }
 
@@ -114,5 +116,13 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public RestaurantBranch getAffiliatedBranch() {
+        return affiliatedBranch;
+    }
+
+    public void setAffiliatedBranch(RestaurantBranch affiliatedBranch) {
+        this.affiliatedBranch = affiliatedBranch;
     }
 }

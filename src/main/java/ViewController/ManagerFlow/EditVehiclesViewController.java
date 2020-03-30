@@ -5,7 +5,7 @@ import Model.Vehicle;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
 import ViewController.AbstractViewController;
-import ViewModel.VehicleEditableViewModel;
+import ViewModel.VehicleViewModel;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -26,7 +26,6 @@ public class EditVehiclesViewController extends AbstractViewController implement
 
     private EditVehiclesViewController() {
         vehicles = dataSource.getVehicles();
-        configureTable();
         configureUI();
         mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
@@ -83,7 +82,8 @@ public class EditVehiclesViewController extends AbstractViewController implement
     private void configureTable() {
         tableModel = new EditVehiclesTableModel(vehicles);
         table = new JTable(tableModel);
-        table.getColumn("").setCellRenderer(new ButtonRenderer());
+        // TODO: MAake combobox renderer for model and brand
+        table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
@@ -114,11 +114,11 @@ public class EditVehiclesViewController extends AbstractViewController implement
 
     private class EditVehiclesTableModel extends AbstractTableModel {
         private String[] columnNames;
-        private ArrayList<VehicleEditableViewModel> data = new ArrayList<>();
+        private ArrayList<VehicleViewModel> data = new ArrayList<>();
 
         public EditVehiclesTableModel(ArrayList<Vehicle> data) {
-            data.forEach(vehicle -> this.data.add(new VehicleEditableViewModel(vehicle)));
-            this.columnNames = VehicleEditableViewModel.columnNames;
+            data.forEach(vehicle -> this.data.add(new VehicleViewModel(vehicle)));
+            this.columnNames = VehicleViewModel.columnNames;
         }
 
         public int getColumnCount() {
@@ -170,7 +170,7 @@ public class EditVehiclesViewController extends AbstractViewController implement
         }
 
         public void add(Vehicle vehicle) {
-            this.data.add(new VehicleEditableViewModel(vehicle));
+            this.data.add(new VehicleViewModel(vehicle));
             this.fireTableDataChanged();
         }
     }

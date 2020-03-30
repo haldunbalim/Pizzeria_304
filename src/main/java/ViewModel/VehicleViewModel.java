@@ -2,12 +2,12 @@ package ViewModel;
 
 import Model.Vehicle;
 
-public class VehicleEditableViewModel {
+public class VehicleViewModel {
 
     public static String[] columnNames = {"License Plate", "Brand", "Model", ""};
     private Vehicle model;
 
-    public VehicleEditableViewModel(Vehicle model) {
+    public VehicleViewModel(Vehicle model) {
         this.model = model;
     }
 

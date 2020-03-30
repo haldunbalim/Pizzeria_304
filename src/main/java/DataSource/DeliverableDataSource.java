@@ -26,21 +26,6 @@ public class DeliverableDataSource extends AbstractDataSource {
         list.add(new Deliverable(1, "Del1", 5.5));
         list.add(new Deliverable(2, "Del2", 4.5));
         list.add(new Deliverable(3, "Del3", 7.5));
-        list.add(new Deliverable(1, "Del1", 5.5));
-        list.add(new Deliverable(2, "Del2", 4.5));
-        list.add(new Deliverable(3, "Del3", 7.5));
-        list.add(new Deliverable(1, "Del1", 5.5));
-        list.add(new Deliverable(2, "Del2", 4.5));
-        list.add(new Deliverable(3, "Del3", 7.5));
-        list.add(new Deliverable(1, "Del1", 5.5));
-        list.add(new Deliverable(2, "Del2", 4.5));
-        list.add(new Deliverable(3, "Del3", 7.5));
-        list.add(new Deliverable(1, "Del1", 5.5));
-        list.add(new Deliverable(2, "Del2", 4.5));
-        list.add(new Deliverable(3, "Del3", 7.5));
-        list.add(new Deliverable(1, "Del1", 5.5));
-        list.add(new Deliverable(2, "Del2", 4.5));
-        list.add(new Deliverable(3, "Del3", 7.5));
         return list;
     }
 

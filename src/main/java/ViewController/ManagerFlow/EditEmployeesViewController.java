@@ -26,7 +26,6 @@ public class EditEmployeesViewController extends AbstractViewController implemen
 
     private EditEmployeesViewController() {
         employees = dataSource.getEmployees();
-        configureTable();
         configureUI();
         mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
@@ -76,7 +75,7 @@ public class EditEmployeesViewController extends AbstractViewController implemen
     private void configureTable() {
         tableModel = new EditEmployeesTableModel(employees);
         table = new JTable(tableModel);
-        table.getColumn("").setCellRenderer(new ButtonRenderer());
+        table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);

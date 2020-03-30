@@ -26,7 +26,6 @@ public class EditDeliverablesViewController extends AbstractViewController imple
 
     private EditDeliverablesViewController() {
         deliverables = dataSource.getDeliverables();
-        configureTable();
         configureUI();
         mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
@@ -83,7 +82,7 @@ public class EditDeliverablesViewController extends AbstractViewController imple
     private void configureTable() {
         tableModel = new EditDeliverablesTableModel(deliverables);
         table = new JTable(tableModel);
-        table.getColumn("").setCellRenderer(new ButtonRenderer());
+        table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);

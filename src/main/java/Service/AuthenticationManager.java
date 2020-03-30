@@ -100,4 +100,8 @@ public class AuthenticationManager {
         return -1;
     }
 
+    //for testing
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
 }

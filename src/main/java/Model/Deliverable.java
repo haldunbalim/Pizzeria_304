@@ -30,4 +30,8 @@ public class Deliverable {
     public Integer getDid() {
         return did;
     }
+
+    public String toString() {
+        return name;
+    }
 }

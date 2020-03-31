@@ -6,17 +6,15 @@ import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
 import ViewController.AbstractTableViewController;
 import ViewController.MyAbstractTableModel;
-import ViewModel.DeliverableEditableViewModel;
+import ViewModel.DeliverableManagerViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditDeliverablesViewController extends AbstractTableViewController implements TableModelListener {
+public class EditDeliverablesViewController extends AbstractTableViewController {
     private static EditDeliverablesViewController instance = new EditDeliverablesViewController();
     private DeliverableDataSource dataSource = DeliverableDataSource.getInstance();
     private ArrayList<Deliverable> deliverables;
@@ -25,7 +23,6 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
     private EditDeliverablesViewController() {
         deliverables = dataSource.getDeliverables();
         configureUI();
-        table.getModel().addTableModelListener(this);
     }
 
     public static EditDeliverablesViewController getInstance() {
@@ -82,40 +79,39 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
         addTable();
     }
 
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        //  Remove row calls e.getColumn() = -1 ??
-        if (column < 0)
-            return;
-        String columnName = tableModel.getColumnName(column);
-        // Object data = tableModel.getValueAt(row, column); may be needed
-        if (columnName.equals("")) {
-            Deliverable removed = deliverables.remove(row);
-            tableModel.remove(row);
-            dataSource.removeDeliverableData(removed);
-            return;
-        }
-        dataSource.updateDeliverableData(deliverables.get(row));
-    }
-
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
     private class EditDeliverablesTableModel extends MyAbstractTableModel {
         public EditDeliverablesTableModel(ArrayList<Deliverable> data) {
-            data.forEach(deliverable -> this.data.add(new DeliverableEditableViewModel(deliverable)));
-            this.columnNames = DeliverableEditableViewModel.columnNames;
+            data.forEach(deliverable -> this.data.add(new DeliverableManagerViewModel(deliverable)));
+            this.columnNames = DeliverableManagerViewModel.columnNames;
         }
         public boolean isCellEditable(int row, int col) {
             return true;
         }
 
         public void add(Deliverable deliverable) {
-            this.data.add(new DeliverableEditableViewModel(deliverable));
+            this.data.add(new DeliverableManagerViewModel(deliverable));
             this.fireTableDataChanged();
+        }
+
+        public Class getColumnClass(int col) {
+            return DeliverableManagerViewModel.getColumnClassAt(col);
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            if (col == getColumnCount() - 1) {
+                Deliverable removed = deliverables.remove(row);
+                tableModel.remove(row);
+                dataSource.removeDeliverableData(removed);
+            } else {
+                this.data.get(row).setValueAt(col, value);
+                dataSource.updateDeliverableData(deliverables.get(row));
+            }
+            fireTableCellUpdated(row, col);
         }
     }
 

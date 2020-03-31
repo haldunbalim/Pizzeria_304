@@ -9,23 +9,21 @@ import ViewController.MyAbstractTableModel;
 import ViewModel.VehicleViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditVehiclesViewController extends AbstractTableViewController implements TableModelListener {
+public class EditVehiclesViewController extends AbstractTableViewController {
     private static EditVehiclesViewController instance = new EditVehiclesViewController();
     protected JPanel mainPanel;
     private ArrayList<Vehicle> vehicles;
     private VehicleDataSource dataSource = VehicleDataSource.getInstance();
+    JLabel errorLabel;
 
     private EditVehiclesViewController() {
         vehicles = dataSource.getVehicles();
         configureUI();
-        table.getModel().addTableModelListener(this);
     }
 
     public static EditVehiclesViewController getInstance() {
@@ -35,6 +33,17 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
     private void configureUI() {
         configureTable();
         configureAddPanel();
+        configureErrorLabel();
+    }
+
+    private void configureErrorLabel() {
+        errorLabel = new JLabel();
+        mainPanel.add(errorLabel, BorderLayout.NORTH);
+    }
+
+    private void showError(String st) {
+        errorLabel.setText(st);
+        errorLabel.setVisible(true);
     }
 
     private void configureAddPanel() {
@@ -61,8 +70,12 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
                     return;
                 }
                 Vehicle vehicle = dataSource.createNewVehicle(licensePlate, brand, model);
-                vehicles.add(vehicle);
-                ((EditVehiclesTableModel) tableModel).add(vehicle);
+                if (vehicle == null) {
+                    showError("License Plate already exists");
+                } else {
+                    vehicles.add(vehicle);
+                    ((EditVehiclesTableModel) tableModel).add(vehicle);
+                }
             }
         });
 
@@ -84,24 +97,6 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
         addTable();
     }
 
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        //  Remove row calls e.getColumn() = -1 ??
-        if (column < 0)
-            return;
-        String columnName = tableModel.getColumnName(column);
-
-        if (columnName.equals("")) {
-            Vehicle removed = vehicles.remove(row);
-            tableModel.remove(row);
-            dataSource.removeVehicleData(removed);
-            return;
-        }
-        dataSource.updateVehicleData(vehicles.get(row));
-    }
-
     public JPanel getMainPanel() {
         return mainPanel;
     }
@@ -115,9 +110,28 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
         public Class getColumnClass(int col) {
             return VehicleViewModel.getColumnClassAt(col);
         }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex != 0;
+        }
+
         public void add(Vehicle vehicle) {
             this.data.add(new VehicleViewModel(vehicle));
             this.fireTableDataChanged();
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            if (col == getColumnCount() - 1) {
+                Vehicle removed = vehicles.remove(row);
+                tableModel.remove(row);
+                dataSource.removeVehicleData(removed);
+            } else {
+                this.data.get(row).setValueAt(col, value);
+                dataSource.updateVehicleData(vehicles.get(row));
+            }
+            fireTableCellUpdated(row, col);
         }
     }
 

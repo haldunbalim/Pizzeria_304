@@ -9,23 +9,21 @@ import ViewController.MyAbstractTableModel;
 import ViewModel.UserEditableViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditEmployeesViewController extends AbstractTableViewController implements TableModelListener {
+public class EditEmployeesViewController extends AbstractTableViewController {
     private static EditEmployeesViewController instance = new EditEmployeesViewController();
     private JPanel mainPanel;
     private EmployeesDataSource dataSource = EmployeesDataSource.getInstance();
     private ArrayList<User> employees;
+    private JLabel errorLabel;
 
     private EditEmployeesViewController() {
         employees = dataSource.getEmployees();
         configureUI();
-        table.getModel().addTableModelListener(this);
     }
 
     public static EditEmployeesViewController getInstance() {
@@ -35,6 +33,17 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
     private void configureUI() {
         configureTable();
         configureAddPanel();
+        configureErrorLabel();
+    }
+
+    private void configureErrorLabel() {
+        errorLabel = new JLabel();
+        mainPanel.add(errorLabel, BorderLayout.NORTH);
+    }
+
+    private void showError(String st) {
+        errorLabel.setText(st);
+        errorLabel.setVisible(true);
     }
 
     private void configureAddPanel() {
@@ -56,7 +65,9 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
                 if (username.equals("Username") || password.equals("Password")) {
                     return;
                 }
-                dataSource.createNewUser(username, password);
+                if (dataSource.createNewUser(username, password) == null) {
+                    showError("User with " + username + " already exists");
+                }
             }
         });
 
@@ -68,19 +79,6 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
         mainPanel.add(addNewPanel, BorderLayout.SOUTH);
     }
 
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        //  Remove row calls e.getColumn() = -1 ??
-        if (column < 0)
-            return;
-
-        User removed = employees.remove(row);
-        tableModel.remove(row);
-        dataSource.removeUserData(removed);
-    }
 
     private void configureTable() {
         tableModel = new EditEmployeesTableModel(employees);
@@ -102,8 +100,15 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
         public boolean isCellEditable(int row, int col) {
             return col == getColumnCount() - 1;
         }
+
+        @Override
         public void setValueAt(Object value, int row, int col) {
-            fireTableCellUpdated(row, col);
+            if (col == getColumnCount() - 1) {
+                User removed = employees.remove(row);
+                tableModel.remove(row);
+                dataSource.removeUserData(removed);
+                fireTableCellUpdated(row, col);
+            }
         }
     }
 

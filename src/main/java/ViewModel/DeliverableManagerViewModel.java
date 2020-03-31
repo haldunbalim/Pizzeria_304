@@ -2,12 +2,12 @@ package ViewModel;
 
 import Model.Deliverable;
 
-public class DeliverableEditableViewModel extends AbstractViewModel {
+public class DeliverableManagerViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Price", ""};
 
-    public DeliverableEditableViewModel(Deliverable model) {
+    public DeliverableManagerViewModel(Deliverable model) {
         super(model);
     }
 

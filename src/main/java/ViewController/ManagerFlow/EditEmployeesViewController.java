@@ -6,7 +6,7 @@ import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
 import ViewController.AbstractTableViewController;
 import ViewController.MyAbstractTableModel;
-import ViewModel.UserEditableViewModel;
+import ViewModel.UserManagerViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,9 +94,15 @@ public class EditEmployeesViewController extends AbstractTableViewController {
 
     private class EditEmployeesTableModel extends MyAbstractTableModel {
         EditEmployeesTableModel(ArrayList<User> data) {
-            data.forEach(user -> this.data.add(new UserEditableViewModel(user)));
-            this.columnNames = UserEditableViewModel.columnNames;
+            data.forEach(user -> this.data.add(new UserManagerViewModel(user)));
+            this.columnNames = UserManagerViewModel.columnNames;
         }
+
+        @Override
+        public Class getColumnClass(int col) {
+            return UserManagerViewModel.getColumnClassAt(col);
+        }
+
         public boolean isCellEditable(int row, int col) {
             return col == getColumnCount() - 1;
         }

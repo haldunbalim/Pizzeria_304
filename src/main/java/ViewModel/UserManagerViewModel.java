@@ -2,12 +2,12 @@ package ViewModel;
 
 import Model.User;
 
-public class UserEditableViewModel extends AbstractViewModel {
+public class UserManagerViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Surname", "Phone Number", ""};
 
-    public UserEditableViewModel(User model) {
+    public UserManagerViewModel(User model) {
         super(model);
     }
 

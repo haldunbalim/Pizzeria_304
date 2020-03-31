@@ -49,12 +49,13 @@ public class DeliverableDataSource extends AbstractDataSource {
     public void updateDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
         String name = deliverable.getName();
-        double price = deliverable.getPrice();
+        double p = deliverable.getPrice();
+        float price = (float) p;
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE DELIVERABLE SET " +
                     "name = ?, price = ? WHERE did = ?");
             ps.setString(1, name);
-            ps.setDouble(2, price);
+            ps.setFloat(2, price);
             ps.setInt(3, did);
 
             int rowCount = ps.executeUpdate();
@@ -124,8 +125,8 @@ public class DeliverableDataSource extends AbstractDataSource {
             nextDid = takenDids.get(0);
 
             while (takenDids.contains(nextDid)) {
-                int high = (int) (1e7 - 1);
-                int low = (int) (1e6);
+                int high = (int) (1e6 - 1);
+                int low = (int) (1e5);
                 nextDid = new Random().nextInt(high-low) + low;
             }
             rs.close();

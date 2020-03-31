@@ -3,7 +3,7 @@
 CREATE TABLE CustomerType
 (
     type           varchar(15) PRIMARY KEY,
-    discountRate   Float,
+    discountRate   number(*,2),
     freeDeliveries Integer,
     membershipFee  Integer,
     renewalDate    date
@@ -63,7 +63,7 @@ CREATE TABLE Menu
 (
     mid   INTEGER,
     Name  varchar(20),
-    Price float(2),
+    Price number(*, 2),
     PRIMARY KEY (mid)
 );
 
@@ -86,7 +86,7 @@ CREATE TABLE Deliverable
 (
     did   INTEGER,
     Name  varchar(20),
-    Price FLOAT(2),
+    Price number(*, 2),
     PRIMARY KEY (did)
 );
 

@@ -10,6 +10,7 @@ public class OrdersDataSource extends AbstractDataSource {
     private static OrdersDataSource ourInstance = new OrdersDataSource();
 
     private OrdersDataSource() {
+        primaryTable = "Orders";
     }
 
     public static OrdersDataSource getInstance() {

@@ -2,7 +2,6 @@ package DataSource;
 
 import Model.Vehicle;
 import database.DataBaseCredentials;
-import database.DatabaseConnectionHandler;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,11 +10,9 @@ public class VehicleDataSource extends AbstractDataSource {
 
 
     private static VehicleDataSource instance = new VehicleDataSource();
-    private static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
-    private static Connection connection = DatabaseConnectionHandler.getConnection();
-
 
     private VehicleDataSource() {
+        primaryTable = "Vehicle";
     }
 
     public static VehicleDataSource getInstance() {
@@ -44,19 +41,6 @@ public class VehicleDataSource extends AbstractDataSource {
         } catch (SQLException e) {
             System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.tableEmpty + "Vehicle");
         }
-//        ArrayList<Vehicle> list = new ArrayList<>();
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod2", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod3", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod4", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod6", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
-//        list.add(new Vehicle("mod7", "Del1", "br1"));
-//        list.add(new Vehicle("mod1", "Del1", "br1"));
 
         return list;
     }
@@ -67,22 +51,7 @@ public class VehicleDataSource extends AbstractDataSource {
 
     public void removeVehicleData(Vehicle v) {
         String licensePlate = v.getLicensePlate();
-        String model = v.getModel();
-        String brand = v.getBrand();
-
-        try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM Vehicle WHERE LICENSE_PLATE = ?");
-            ps.setString(1, licensePlate);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.vehicleNotFound);
-            }
-            connection.commit();
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.vehicleNotFound);
-        }
+        removeFromDb(primaryTable, String.format("license_plate='%s'", licensePlate));
     }
 
     public Vehicle createNewVehicle(String licensePlate, String brand, String model) {

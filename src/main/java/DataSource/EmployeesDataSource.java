@@ -11,6 +11,7 @@ public class EmployeesDataSource extends AbstractDataSource {
     private static EmployeesDataSource instance = new EmployeesDataSource();
 
     private EmployeesDataSource() {
+        primaryTable = "Users";
     }
 
     public static EmployeesDataSource getInstance() {
@@ -30,6 +31,7 @@ public class EmployeesDataSource extends AbstractDataSource {
     }
 
     public void removeUserData(User user) {
-
+        long user_id = user.getUID();
+        removeFromDb(primaryTable, String.format("user_id=%d", user_id));
     }
 }

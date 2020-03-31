@@ -2,19 +2,18 @@ package DataSource;
 
 import Model.Deliverable;
 import database.DataBaseCredentials;
-import database.DatabaseConnectionHandler;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class DeliverableDataSource extends AbstractDataSource {
 
     private static DeliverableDataSource instance = new DeliverableDataSource();
-    private static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
-    private static Connection connection = DatabaseConnectionHandler.getConnection();
-
     private DeliverableDataSource() {
+        primaryTable = "Deliverable";
     }
 
     public static DeliverableDataSource getInstance() {
@@ -72,28 +71,31 @@ public class DeliverableDataSource extends AbstractDataSource {
     // given an deliverable model removes it from the db
     public void removeDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
-        try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM DELIVERABLE WHERE " +
-                    "did = ?");
-            ps.setInt(1, did);
+        removeFromDb(primaryTable, String.format("did=%d", did));
 
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.deliverableNotFound);
-            }
-            connection.commit();
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.deleteError);
-        }
+        // TODO: if db deletion fails don't allow the object to be deleted
+//
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("DELETE FROM DELIVERABLE WHERE " +
+//                    "did = ?");
+//            ps.setInt(1, did);
+//
+//            int rowCount = ps.executeUpdate();
+//            if (rowCount == 0) {
+//                System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.deliverableNotFound);
+//            }
+//            connection.commit();
+//            ps.close();
+//        } catch (SQLException e) {
+//            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.deleteError);
+//        }
     }
 
     // given props create a new deliverable in db and return
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
-
         try {
-            int newDid = getNextDID();
+            int newDid = getNextId(primaryTable, "did");
             PreparedStatement ps = connection.prepareStatement("INSERT INTO DELIVERABLE VALUES (?, ?, ?)");
             ps.setString(2, name);
             ps.setDouble(3, price);
@@ -109,33 +111,6 @@ public class DeliverableDataSource extends AbstractDataSource {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.insertionError);
         }
         return d;
-    }
-
-    private int getNextDID() {
-        int nextDid = 1;
-        ArrayList<Integer> takenDids = new ArrayList<Integer>();
-        try {
-            Statement stmt = connection.createStatement();
-            // Oracle DB uses FETCH NEXT row_number ROWS ONLY
-            ResultSet rs = stmt.executeQuery("SELECT did FROM DELIVERABLE ORDER BY did");
-
-            while (rs.next()) {
-                takenDids.add(rs.getInt("did"));
-            }
-            nextDid = takenDids.get(0);
-
-            while (takenDids.contains(nextDid)) {
-                int high = (int) (1e6 - 1);
-                int low = (int) (1e5);
-                nextDid = new Random().nextInt(high-low) + low;
-            }
-            rs.close();
-            stmt.close();
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return nextDid;
     }
 
 }

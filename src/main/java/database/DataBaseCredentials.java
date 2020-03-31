@@ -29,6 +29,18 @@ public class DataBaseCredentials {
     public static final String deliverableNotFound = "Deliverable not found.";
     public static final String deleteError = "Delete unsuccessfull.";
     public static final String updateError = "Update unsuccessfull.";
+    public static final String notFound = "Not found";
+
+    public enum OperationResult {
+        inserted,
+        insertionFailed,
+        deleted,
+        deletionFailed,
+        updated,
+        updateFailed,
+        notFound,
+        tableEmpty
+    };
 
 
 }

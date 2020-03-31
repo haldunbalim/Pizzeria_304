@@ -3,19 +3,16 @@ package DataSource;
 import Model.User;
 import Model.UserType;
 import database.DataBaseCredentials;
-import database.DatabaseConnectionHandler;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 
-public class UserDataSource {
+public class UserDataSource extends AbstractDataSource{
     private static UserDataSource instance = new UserDataSource();
-    private static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
-    private static Connection connection = dbHandler.getConnection();
 
     private UserDataSource() {
+        primaryTable = "Users";
     }
 
     public static UserDataSource getInstance() {
@@ -62,5 +59,10 @@ public class UserDataSource {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.profileUpdateError);
         }
 
+    }
+
+    public void removeUserData(User user) {
+        long user_id = user.getUID();
+        removeFromDb(primaryTable, String.format("user_id=%d", user_id));
     }
 }

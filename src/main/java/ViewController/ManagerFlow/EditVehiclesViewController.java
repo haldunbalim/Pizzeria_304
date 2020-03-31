@@ -24,6 +24,7 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
 
     private EditVehiclesViewController() {
         vehicles = dataSource.getVehicles();
+        configureUI();
         table.getModel().addTableModelListener(this);
     }
 
@@ -31,7 +32,7 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
         return instance;
     }
 
-    public void configureUI() {
+    private void configureUI() {
         configureTable();
         configureAddPanel();
     }
@@ -99,6 +100,10 @@ public class EditVehiclesViewController extends AbstractTableViewController impl
             return;
         }
         dataSource.updateVehicleData(vehicles.get(row));
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     private class EditVehiclesTableModel extends MyAbstractTableModel {

@@ -1,8 +1,9 @@
-package ViewController;
+package ViewController.CommonFlow;
 
 import Model.User;
 import Model.UserType;
 import Service.AuthenticationManager;
+import ViewController.AbstractViewController;
 import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
 
@@ -23,6 +24,7 @@ public class ProfileViewController extends AbstractViewController {
     private User currentUser = AuthenticationManager.getInstance().getCurrentUser();
 
     private ProfileViewController() {
+        configureUI();
     }
 
     public static ProfileViewController getInstance() {
@@ -60,7 +62,6 @@ public class ProfileViewController extends AbstractViewController {
         });
     }
 
-    @Override
     public JPanel getMainPanel() {
         return mainPanel;
     }

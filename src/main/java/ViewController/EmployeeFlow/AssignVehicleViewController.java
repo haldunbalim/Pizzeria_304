@@ -26,6 +26,7 @@ public class AssignVehicleViewController extends AbstractViewController implemen
     private ArrayList<Vehicle> vehicles;
 
     private AssignVehicleViewController() {
+        configureUI();
         configureCancelButton();
         table.getModel().addTableModelListener(this);
     }
@@ -69,6 +70,10 @@ public class AssignVehicleViewController extends AbstractViewController implemen
         EmployeeTabs.getInstance().setSelectedVehicle(vehicle);
         OrdersDataSource.getInstance().changeOrderState(EmployeeTabs.getInstance().getSelectedOrder(), vehicle, OrderState.IN_DELIVERY);
         EmployeeTabs.getInstance().openFinishDelivery();
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     private class AssignVehiclesTableModel extends MyAbstractTableModel {

@@ -20,6 +20,7 @@ public class ViewOrdersViewController extends AbstractViewController {
     private ViewOrdersTableModel tableModel;
 
     private ViewOrdersViewController() {
+        configureUI();
     }
 
     public static ViewOrdersViewController getInstance() {
@@ -56,5 +57,9 @@ public class ViewOrdersViewController extends AbstractViewController {
         public boolean isCellEditable(int row, int col) {
             return false;
         }
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 }

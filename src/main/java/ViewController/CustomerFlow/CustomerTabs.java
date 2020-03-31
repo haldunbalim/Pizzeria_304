@@ -1,8 +1,8 @@
 package ViewController.CustomerFlow;
 
 import Model.Deliverable;
-import ViewController.ProfileViewController;
-import ViewController.SetProfilePage;
+import ViewController.CommonFlow.ProfileViewController;
+import ViewController.CommonFlow.SetProfilePage;
 
 import javax.swing.*;
 import java.util.ArrayList;

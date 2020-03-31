@@ -23,6 +23,7 @@ public class AssignOrderViewController extends AbstractViewController implements
     private AssignOrderTableModel tableModel;
 
     private AssignOrderViewController() {
+        configureUI();
         table.getModel().addTableModelListener(this);
     }
 
@@ -54,6 +55,10 @@ public class AssignOrderViewController extends AbstractViewController implements
         Order removed = orders.remove(row);
         EmployeeTabs.getInstance().setSelectedOrder(removed);
         EmployeeTabs.getInstance().openAssignVehicle();
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     private class AssignOrderTableModel extends MyAbstractTableModel {

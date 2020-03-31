@@ -22,6 +22,7 @@ public class FinalOrderViewController extends AbstractViewController {
     private JButton cancelButton;
 
     private FinalOrderViewController() {
+        configureUI();
         orderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,5 +53,9 @@ public class FinalOrderViewController extends AbstractViewController {
 
     public static FinalOrderViewController getInstance() {
         return instance;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 }

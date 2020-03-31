@@ -5,13 +5,13 @@ import Model.Vehicle;
 public class VehicleViewModel extends AbstractViewModel {
 
     public static String[] columnNames = {"License Plate", "Brand", "Model", ""};
-    protected Vehicle model;
 
     public VehicleViewModel(Vehicle model) {
         super(model);
     }
 
     public Object getColumnView(int col) {
+        Vehicle model = ((Vehicle) this.model);
         switch (col) {
             case 0:
                 return model.getLicensePlate();
@@ -27,8 +27,17 @@ public class VehicleViewModel extends AbstractViewModel {
 
     @Override
     public void setValueAt(int col, Object value) {
-
+        Vehicle model = ((Vehicle) this.model);
+        switch (col) {
+            case 0:
+                model.setLicensePlate((String) value);
+            case 1:
+                model.setBrand((String) value);
+            case 2:
+                model.setModel((String) value);
+        }
     }
+
     public static Class getColumnClassAt(int col) {
         return col == 3 ? Boolean.class : String.class;
     }

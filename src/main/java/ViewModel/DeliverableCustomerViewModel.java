@@ -4,7 +4,6 @@ import Model.Deliverable;
 
 public class DeliverableCustomerViewModel extends AbstractViewModel {
     public static String[] columnNames = {"Name", "Price", "Amount", "Add", "Remove"};
-    private Deliverable model;
     private int amount = 0;
 
     public DeliverableCustomerViewModel(Deliverable model) {
@@ -26,6 +25,8 @@ public class DeliverableCustomerViewModel extends AbstractViewModel {
     }
 
     public Object getColumnView(int col) {
+        Deliverable model = ((Deliverable) this.model);
+
         switch (col) {
             case 0:
                 return model.getName();
@@ -43,10 +44,6 @@ public class DeliverableCustomerViewModel extends AbstractViewModel {
     @Override
     public void setValueAt(int col, Object value) {
 
-    }
-
-    public Deliverable getModel() {
-        return model;
     }
 
     public void incrementAmount() {

@@ -24,6 +24,7 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
 
     private EditDeliverablesViewController() {
         deliverables = dataSource.getDeliverables();
+        configureUI();
         table.getModel().addTableModelListener(this);
     }
 
@@ -31,7 +32,7 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
         return instance;
     }
 
-    public void configureUI() {
+    private void configureUI() {
         configureTable();
         configureAddPanel();
     }
@@ -78,7 +79,6 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
         tableModel = new EditDeliverablesTableModel(deliverables);
         table = new JTable(tableModel);
         table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
-
         addTable();
     }
 
@@ -98,6 +98,10 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
             return;
         }
         dataSource.updateDeliverableData(deliverables.get(row));
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     private class EditDeliverablesTableModel extends MyAbstractTableModel {

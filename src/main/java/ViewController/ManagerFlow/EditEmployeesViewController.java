@@ -24,6 +24,7 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
 
     private EditEmployeesViewController() {
         employees = dataSource.getEmployees();
+        configureUI();
         table.getModel().addTableModelListener(this);
     }
 
@@ -31,7 +32,7 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
         return instance;
     }
 
-    public void configureUI() {
+    private void configureUI() {
         configureTable();
         configureAddPanel();
     }
@@ -87,6 +88,10 @@ public class EditEmployeesViewController extends AbstractTableViewController imp
         table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
         addTable();
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     private class EditEmployeesTableModel extends MyAbstractTableModel {

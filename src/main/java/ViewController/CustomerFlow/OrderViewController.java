@@ -22,6 +22,7 @@ public class OrderViewController extends AbstractViewController {
 
     protected OrderViewController() {
         deliverables = dataSource.getDeliverables();
+        configureUI();
         configureOrderButton();
     }
 
@@ -53,6 +54,10 @@ public class OrderViewController extends AbstractViewController {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
     private class OrderDeliverablesTableModel extends MyAbstractTableModel {
         public OrderDeliverablesTableModel(ArrayList<Deliverable> data) {
             data.forEach(deliverable -> this.data.add(new DeliverableCustomerViewModel(deliverable)));
@@ -67,7 +72,7 @@ public class OrderViewController extends AbstractViewController {
             ArrayList<Deliverable> list = new ArrayList<>();
             for (AbstractViewModel dcvm : data)
                 for (int i = 0; i < ((DeliverableCustomerViewModel) dcvm).getAmount(); i++)
-                    list.add(((DeliverableCustomerViewModel) dcvm).getModel());
+                    list.add((Deliverable) dcvm.getModel());
             return list;
         }
     }

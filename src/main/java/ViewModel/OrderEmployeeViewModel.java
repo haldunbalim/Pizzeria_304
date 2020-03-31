@@ -6,13 +6,13 @@ import java.util.Date;
 
 public class OrderEmployeeViewModel extends AbstractViewModel {
     public static String[] columnNames = {"Address", "Order", "Price", "Date", ""};
-    protected Order model;
 
     public OrderEmployeeViewModel(Order model) {
         super(model);
     }
 
     public Object getColumnView(int col) {
+        Order model = ((Order) this.model);
         switch (col) {
             case 0:
                 return model.getOrderer().getAddress();
@@ -30,7 +30,7 @@ public class OrderEmployeeViewModel extends AbstractViewModel {
 
     @Override
     public void setValueAt(int col, Object value) {
-
+        return;
     }
 
     public static Class getColumnClassAt(int col) {

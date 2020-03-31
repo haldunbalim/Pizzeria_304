@@ -6,13 +6,13 @@ public class UserEditableViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Surname", "Phone Number", ""};
-    protected User model;
 
     public UserEditableViewModel(User model) {
         super(model);
     }
 
     public Object getColumnView(int col) {
+        User model = ((User) this.model);
         switch (col) {
             case 0:
                 return model.getName();
@@ -28,7 +28,15 @@ public class UserEditableViewModel extends AbstractViewModel {
 
     @Override
     public void setValueAt(int col, Object value) {
-
+        User model = ((User) this.model);
+        switch (col) {
+            case 0:
+                model.setName((String) value);
+            case 1:
+                model.setSurname((String) value);
+            case 2:
+                model.setPhoneNumber((String) value);
+        }
     }
 
     public static Class getColumnClassAt(int col) {

@@ -1,4 +1,4 @@
-package ViewController;
+package ViewController.CommonFlow;
 
 import DataSource.UserDataSource;
 import Model.Address;
@@ -7,6 +7,7 @@ import Model.UserType;
 import Service.AuthenticationManager;
 import Service.Coordinator;
 import Service.ScreenEnum;
+import ViewController.AbstractViewController;
 import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
 
@@ -30,6 +31,7 @@ public class SetProfilePage extends AbstractViewController {
     User currentUser = AuthenticationManager.getInstance().getCurrentUser();
 
     private SetProfilePage() {
+        configureUI();
         for (String city : cities) {
             cityComboBox.addItem(city);
         }
@@ -76,10 +78,6 @@ public class SetProfilePage extends AbstractViewController {
         return instance;
     }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
-
     //TODO: Implement this or use formattedTextFields
     private boolean checkIfAllFieldsAreValid() {
         return true;
@@ -88,6 +86,10 @@ public class SetProfilePage extends AbstractViewController {
     private void showError(String st) {
         errorLabel.setText(st);
         errorLabel.setVisible(true);
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
 

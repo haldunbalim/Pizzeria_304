@@ -6,13 +6,13 @@ public class DeliverableEditableViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Price", ""};
-    protected Deliverable model;
 
     public DeliverableEditableViewModel(Deliverable model) {
         super(model);
     }
 
     public Object getColumnView(int col) {
+        Deliverable model = ((Deliverable) this.model);
         switch (col) {
             case 0:
                 return model.getName();
@@ -26,7 +26,13 @@ public class DeliverableEditableViewModel extends AbstractViewModel {
 
     @Override
     public void setValueAt(int col, Object value) {
-
+        Deliverable model = ((Deliverable) this.model);
+        switch (col) {
+            case 0:
+                model.setName((String) value);
+            case 1:
+                model.setPrice((Double) value);
+        }
     }
 
     public static Class getColumnClassAt(int col) {

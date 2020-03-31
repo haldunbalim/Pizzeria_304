@@ -1,4 +1,4 @@
-package ViewController;
+package ViewController.CommonFlow;
 
 import Model.UserType;
 import Reusable.PlaceholderFocusListener;
@@ -6,6 +6,7 @@ import Service.AuthStatus;
 import Service.AuthenticationManager;
 import Service.Coordinator;
 import Service.ScreenEnum;
+import ViewController.AbstractViewController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,7 @@ import java.awt.event.ActionListener;
 public class LoginViewController extends AbstractViewController {
 
     private static LoginViewController instance = new LoginViewController();
-    private JPanel mainPanel;
+    protected JPanel mainPanel;
     private JTextField usernameTextField;
     private JButton loginButton;
     private JButton registerButton;
@@ -122,5 +123,10 @@ public class LoginViewController extends AbstractViewController {
         }
 
         return false;
+    }
+
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 }

@@ -47,10 +47,11 @@ public class VehicleDataSource extends AbstractDataSource {
                 String licensePlate = rs.getString("license_plate");
                 String model = rs.getString("model");
                 String brand = rs.getString("brand");
-                String availability = rs.getString("available");
+                String availability = rs.getString("availability");
+                boolean avail = availabilityHasMap.get(availability);
 
                 // TODO: Available Field added to vehicle
-                list.add(new Vehicle(licensePlate, model, brand, true));//availabilityHasMap.get(availability)));
+                list.add(new Vehicle(licensePlate, model, brand, avail));
             }
             rs.close();
             stmt.close();
@@ -71,7 +72,7 @@ public class VehicleDataSource extends AbstractDataSource {
         String avail = availabilityHasMapReverse.get(availability);
 
         String brand2 = checkBrandName(brand, model);
-        String setValues = String.format("model='%s', available='%s' WHERE licence_plate='%s'", model, avail, licensePlate);
+        String setValues = String.format("model='%s', availability='%s' WHERE licence_plate='%s'", model, avail, licensePlate);
 
         updateColumnValues(primaryTable, setValues);
         v.setBrand(brand2);
@@ -136,7 +137,7 @@ public class VehicleDataSource extends AbstractDataSource {
         String licensePlate = v.getLicensePlate();
 
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLE SET available = ?" +
+            PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLE SET AVAILABILITY = ?" +
                     "WHERE LICENSE_PLATE = ?");
 
             ps.setString(1, availabilityHasMapReverse.get(b));

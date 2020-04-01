@@ -72,6 +72,7 @@ public class DeliverableDataSource extends AbstractDataSource {
                 String.format(Locale.CANADA, "%d, '%s', %.2f", newDid, name, price)
         );
         if (res == DataBaseCredentials.OperationResult.inserted) {
+            double priceWithTwoDecimals = Double.parseDouble(String.format("%.2f", price));
             d = new Deliverable(newDid, name, price);
         }
         return d;

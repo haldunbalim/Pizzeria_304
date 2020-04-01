@@ -8,7 +8,7 @@ CREATE TABLE CustomerType
     membershipFee  Integer,
     renewalDate    date
 );
- -- TODO: add user_type
+
 CREATE TABLE Users
 (
     user_id   INTEGER PRIMARY KEY,

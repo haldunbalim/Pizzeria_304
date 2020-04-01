@@ -2,7 +2,6 @@ package DataSource;
 
 import Model.User;
 import database.DataBaseCredentials;
-import database.DatabaseConnectionHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +24,11 @@ public class AuthenticationManager extends AbstractDataSource {
     }
 
 
-    // returns info about Authentication Status
+    /**
+     * @param username
+     * @param password
+     * @return NEW_REGISTRATION if signup is successful
+     */
     // call login after signUp is successfully complete
     public AuthStatus signUp(String username, String password) {
         long newId = getNextIdLong(primaryTable, "user_id");
@@ -41,8 +44,11 @@ public class AuthenticationManager extends AbstractDataSource {
         }
     }
 
-    // returns info about Authentication Status
-    // record currentUser as a property of the class
+    /**
+     * @param username
+     * @param password
+     * @return authentication status of the current user
+     */
     public AuthStatus login(String username, String password) {
         try {
             Statement stmt = connection.createStatement();
@@ -60,7 +66,6 @@ public class AuthenticationManager extends AbstractDataSource {
             stmt.close();
 
             if (password.equals(userPassword)) {
-                //currentUser = new User(username, password);
                 currentUser = UserDataSource.getInstance().getUser(userId);
                 return AuthStatus.AUTH_SUCCESSFUL;
             } else {
@@ -78,30 +83,6 @@ public class AuthenticationManager extends AbstractDataSource {
 
     public User getCurrentUser() {
         return currentUser;
-    }
-
-    // auxilary functions
-    // finds the largest user id and returns the next value
-    // TODO: replace with authomatic incrementing
-    public long assignUserIdD() {
-        try {
-            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
-
-            String statement = "Select user_id from Users Order By user_id DESC";
-            ResultSet rs = stmt.executeQuery(statement);
-
-            long nextID; //= Long.parseLong("10000000000");
-            while (rs.next()) {
-                nextID = rs.getLong("user_id") + 1;
-                return nextID;
-            }
-            rs.close();
-            stmt.close();
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-        return -1;
     }
 
 }

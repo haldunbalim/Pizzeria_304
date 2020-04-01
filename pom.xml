@@ -8,6 +8,19 @@
     <artifactId>Pizzeria_304</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!--    <dependencies>-->
+    <!--        &lt;!&ndash; https://mvnrepository.com/artifact/com.jgoodies/jgoodies-forms &ndash;&gt;-->
+    <!--        <dependency>-->
+    <!--            <groupId>com.jgoodies</groupId>-->
+    <!--            <artifactId>jgoodies-forms</artifactId>-->
+    <!--            <version>1.6.0</version>-->
+    <!--        </dependency>-->
+    <!--        <dependency>-->
+    <!--            <groupId>com.oracle.ojdbc</groupId>-->
+    <!--            <artifactId>ojdbc10</artifactId>-->
+    <!--            <version>19.3.0.0</version>-->
+    <!--        </dependency>-->
+    <!--    </dependencies>-->
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.oracle.ojdbc/ojdbc8 -->
         <dependency>
@@ -32,7 +45,12 @@
                     <!-- or whatever version you use -->
                     <source>1.8</source>
                     <target>1.8</target>
-                    <argLine>-Duser.language=en -Duser.region=CA</argLine>
+                    <compilerArgs>
+                        <!--<arg>-Duser.language=en -Duser.region=CA</arg>-->
+                        <arg>-J-Duser.language=en_CA</arg>
+                    </compilerArgs>
+
+                    <!-- <locales>en</locales>-->
                 </configuration>
             </plugin>
         </plugins>

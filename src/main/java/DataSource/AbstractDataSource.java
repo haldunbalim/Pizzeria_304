@@ -10,14 +10,17 @@ import java.util.Random;
 import static database.DataBaseCredentials.*;
 
 // Done for convenience define common functions here if needed
-// If none can be removed
 abstract class AbstractDataSource {
     static DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
     static Connection connection = dbHandler.getConnection();
-    String primaryTable;
+    String primaryTable; // define the primary table of each data source for convenience
 
-    // doesn't work because it needs preparedStatement
-    protected OperationResult insertIntoDb (String tableName, String values) {
+    /**
+     * @param tableName
+     * @param values    formatted string of insertion values separated by comma, eg for pizza: String.format("'%s', '%s', %d", crust, type, did)
+     * @return
+     */
+    protected OperationResult insertIntoDb(String tableName, String values) {
         try {
             //int newDid = getNextId("DELIVERABLE", "did");
             String statement = String.format(Locale.CANADA, "INSERT INTO %s VALUES (%s)", tableName, values);
@@ -37,8 +40,12 @@ abstract class AbstractDataSource {
         }
     }
 
-    // pass the primaryKeys as a formatted String
-    protected OperationResult removeFromDb (String tableName, String primaryKeys) {
+    /**
+     * @param tableName
+     * @param primaryKeys pass in the format primaryKeyColumn=primaryKeyValue
+     * @return
+     */
+    protected OperationResult removeFromDb(String tableName, String primaryKeys) {
         try {
             String statement = String.format("DELETE FROM %s WHERE %s", tableName, primaryKeys);
             // remove the unnecessary comma at the end
@@ -59,6 +66,13 @@ abstract class AbstractDataSource {
 
     }
 
+    /**
+     * use for iny typed ids
+     *
+     * @param tableName
+     * @param primaryKey columnName of the PrimaryKey in db
+     * @return a unique id in int format
+     */
     protected int getNextIdInt(String tableName, String primaryKey) {
         int nextId = 1;
         ArrayList<Integer> takenIds = new ArrayList<Integer>();
@@ -86,6 +100,13 @@ abstract class AbstractDataSource {
         return nextId;
     }
 
+    /**
+     * use for long typed ids
+     *
+     * @param tableName
+     * @param primaryKey columnName of the PrimaryKey in db
+     * @return a unique id in long format
+     */
     protected long getNextIdLong(String tableName, String primaryKey) {
         long nextId = 1;
         ArrayList<Long> takenIds = new ArrayList<Long>();
@@ -117,6 +138,10 @@ abstract class AbstractDataSource {
         return primaryTable;
     }
 
+    /**
+     * @param pc postalCode String
+     * @return
+     */
     public String getCityFromPostalCode(String pc) {
         String city = "";
         try {

@@ -37,7 +37,9 @@ public class OrdersDataSource extends AbstractDataSource {
         return ourInstance;
     }
 
-    // TODO: Use Authmanager.currentUser info
+    /**
+     * @return orders of current user
+     */
     public ArrayList<Order> getOrdersOfUser() {
         ArrayList<Order> list = new ArrayList<>();
         User currentUser = AuthenticationManager.getInstance().getCurrentUser();
@@ -52,29 +54,20 @@ public class OrdersDataSource extends AbstractDataSource {
                 String state = rs.getString("oder_state");
                 OrderState os = orderStateHashMap.get(state);
                 // TODO: get order deliverables
-                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
+                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
 
-                // TODO: change date to DAte format in Model.Order
                 list.add(new Order(oid, currentUser, date.getTime(), deliverables, os));
-
             }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        User user = new User(123, "adf", "adfs", "adfa", "dfa",
-                "adf", new Address("Istanbul", "adf", "af", 14),
-                UserType.CUSTOMER, 15,
-                new RestaurantBranch(132413, "fdafds",
-                        new Address("dsf", "adf", "adfa", 1234)));
-        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
-        Date date = new Date();
-        //      list.add(new Order(1324, user, date.getTime(), deliverables, OrderState.PENDING));
         return list;
     }
 
-    // TODO: Use Authmanager.currentUsers affiliated branch info
+    // TODO: implement
+    //  TODO: Use Authmanager.currentUsers affiliated branch info
     public ArrayList<Order> getOrdersOfBranch() {
         ArrayList<Order> list = new ArrayList<>();
         User user = new User(123, "adf", "adfs", "adfa", "dfa", "adf", new Address("Istanbul", "adf", "af", 14), UserType.CUSTOMER, 15, new RestaurantBranch(132413, "fdafds", new Address("dsf", "adf", "adfa", 1234)));
@@ -86,7 +79,9 @@ public class OrdersDataSource extends AbstractDataSource {
 
     public Order createOrder(ArrayList<Deliverable> deliverables) {
         Date date = new Date();
-        return new Order(12413, AuthenticationManager.getInstance().getCurrentUser(), date.getTime(), deliverables, OrderState.PENDING);
+        long oid = getNextIdLong("Orders", "oder_id");
+        return new Order(oid, AuthenticationManager.getInstance().getCurrentUser(),
+                date.getTime(), deliverables, OrderState.PENDING);
     }
 
 
@@ -94,7 +89,6 @@ public class OrdersDataSource extends AbstractDataSource {
     // Set vehicle available as well if newState == DELIVERED
     public void changeOrderState(Order selectedOrder, Vehicle vehicle, OrderState newState) {
         long oid = selectedOrder.getOid();
-        String licensePlate = vehicle.getLicensePlate();
         boolean vehicleAvail = newState == OrderState.DELIVERED || newState == OrderState.PENDING;
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE Orders SET ORDER_STATE = ? " +
@@ -105,6 +99,7 @@ public class OrdersDataSource extends AbstractDataSource {
             VehicleDataSource.getInstance().setVehicleAvailability(vehicle, vehicleAvail);
 
             ps.close();
+            connection.commit();
         } catch (SQLException e) {
             System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.updateError);
         }

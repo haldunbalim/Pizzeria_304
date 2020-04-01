@@ -49,7 +49,6 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    // TODO: fix limit_per_Session error
     public boolean connectToDatabase() {
         // System.out.println(username + ", " + password);
         try {

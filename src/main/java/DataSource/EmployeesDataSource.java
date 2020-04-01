@@ -3,6 +3,7 @@ package DataSource;
 import Model.Address;
 import Model.RestaurantBranch;
 import Model.User;
+import database.DataBaseCredentials;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 
-// TODO: Discuss how users should be added
 public class EmployeesDataSource extends AbstractDataSource {
     private static EmployeesDataSource instance = new EmployeesDataSource();
     private static UserDataSource userDataSource = UserDataSource.getInstance();
@@ -24,6 +24,9 @@ public class EmployeesDataSource extends AbstractDataSource {
     }
 
 
+    /**
+     * @return list of employee User instances who work at the current user's branch
+     */
     public ArrayList<User> getEmployees() {
 
         ArrayList<User> list = new ArrayList<>();
@@ -44,9 +47,31 @@ public class EmployeesDataSource extends AbstractDataSource {
         return list;
     }
 
-    // TODO: Check user with such username does not exist
+    /**
+     * adds a new employee to the db
+     *
+     * @param username
+     * @param password
+     * @return User instance if the user can be added to the both Users and EmployeeWorksAtBranch tables
+     */
     public User createNewUser(String username, String password) {
-        return null;
+        User u = null;
+        long newId = getNextIdLong(primaryTable, "user_id");
+        String statement = String.format("%d, '%s', '%s', '%s', null, '%s', '%s'",
+                newId, "name", "surname", username, password, "employee");
+        String statementForBranch = String.format("%d, %d", AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid(),
+                newId);
+        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, statement);
+        DataBaseCredentials.OperationResult res2 = insertIntoDb("EmployeeWorksAtBranch", statementForBranch);
+
+        if (res == DataBaseCredentials.OperationResult.inserted && res2 == DataBaseCredentials.OperationResult.inserted) {
+            u = UserDataSource.getInstance().getUser(newId);
+        } else if (res2 == DataBaseCredentials.OperationResult.insertionFailed) {
+            System.out.println("Employee addition to branch failed");
+        } else {
+
+        }
+        return u;
     }
 
     public void removeUserData(User user) {
@@ -54,6 +79,21 @@ public class EmployeesDataSource extends AbstractDataSource {
         removeFromDb(primaryTable, String.format("user_id=%d", user_id));
     }
 
+    // TODO link UI edit employee data to this method
+    public void editUserData(User user) {
+        String updateStatement = String.format("name='%s', surname='%s', phoneno='%s' WHERE user_id=%d",
+                user.getName(),
+                user.getSurname(),
+                user.getPhoneNumber(),
+                user.getUID());
+        updateColumnValues(primaryTable, updateStatement);
+    }
+
+    /**
+     * @param bid
+     * @return RestaurantBranch instance
+     */
+    // TODO: Add mid to branch model
     public RestaurantBranch getBranch(long bid) {
         RestaurantBranch branch = null;
         try {
@@ -64,7 +104,7 @@ public class EmployeesDataSource extends AbstractDataSource {
             while (rs.next()) {
                 String name = rs.getString("name");
                 int mid = rs.getInt("mid");
-                Address a = UserDataSource.getInstance().getAddressFromTable("Branch", bid);
+                Address a = UserDataSource.getInstance().getAddressFromTable("Branch", "bid=" + bid);
                 branch = new RestaurantBranch(bid, name, a);
             }
 
@@ -76,6 +116,10 @@ public class EmployeesDataSource extends AbstractDataSource {
         return branch;
     }
 
+    /**
+     * @param userId
+     * @return affiliated bid of the Employee
+     */
     public long getBranchIdOfEmployee(long userId) {
         long bid = -1;
         try {
@@ -90,11 +134,14 @@ public class EmployeesDataSource extends AbstractDataSource {
                 break;
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + "problem in finding bid");
         }
         return bid;
     }
 
+    /**
+     * @return currentUser's branchId
+     */
     public long getCurrentBranchId() {
         return getBranchIdOfEmployee(AuthenticationManager.getInstance().getCurrentUser().getUID());
     }

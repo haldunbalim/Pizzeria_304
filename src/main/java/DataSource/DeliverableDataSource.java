@@ -12,6 +12,7 @@ import java.util.Locale;
 public class DeliverableDataSource extends AbstractDataSource {
 
     private static DeliverableDataSource instance = new DeliverableDataSource();
+
     private DeliverableDataSource() {
         primaryTable = "Deliverable";
     }
@@ -21,8 +22,12 @@ public class DeliverableDataSource extends AbstractDataSource {
     }
 
 
-    // returns an arrayList of Deliverables for currentUser's affiliated restaurant
-    // access current user via LoginManager
+    /**
+     * returns an arrayList of Deliverables for currentUser's affiliated restaurant
+     * access current user via AuthenticationManager
+     *
+     * @return
+     */
     public ArrayList<Deliverable> getDeliverables() {
         ArrayList<Deliverable> list = new ArrayList<>();
         try {
@@ -44,7 +49,59 @@ public class DeliverableDataSource extends AbstractDataSource {
         return list;
     }
 
-    // given an updated deliverable model saves the update in db
+    /**
+     * @param did
+     * @return
+     */
+    public Deliverable getDeliverable(int did) {
+        Deliverable d = null;
+        try {
+            Statement stmt = connection.createStatement();
+            String query = "SELECT * FROM DELIVERABLE WHERE did=" + did;
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                double price = rs.getDouble("price");
+                d = new Deliverable(did, name, price);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.tableEmpty + "-Deliverable");
+        }
+        return d;
+    }
+
+
+    /**
+     * @return an arrayList of Deliverables for the specific order
+     */
+    public ArrayList<Deliverable> getDeliverablesInOrder(long oid) {
+        ArrayList<Deliverable> list = new ArrayList<>();
+        try {
+            Statement stmt = connection.createStatement();
+            String query = "SELECT * FROM ORDERS natural join ORDERCONTAINSDELIVERABLES";
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int did = rs.getInt("did");
+                list.add(getDeliverable(did));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.tableEmpty + "-Deliverable");
+        }
+        return list;
+    }
+
+
+    /**
+     * given an updated deliverable model saves the update in db
+     *
+     * @param deliverable Deliverable instance
+     */
     public void updateDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
         String name = deliverable.getName();
@@ -54,16 +111,21 @@ public class DeliverableDataSource extends AbstractDataSource {
         updateColumnValues(primaryTable, values);
     }
 
-    // given an deliverable model removes it from the db
+    /**
+     * given an deliverable model removes it from the db
+     *
+     * @param deliverable Deliverable instance
+     */
     public void removeDeliverableData(Deliverable deliverable) {
         int did = deliverable.getDid();
         removeFromDb(primaryTable, String.format("did=%d", did));
-
-        // TODO: if db deletion fails don't allow the object to be deleted
-        // We get all the deliverable info from the db this shouldn't be a problem -gs
     }
 
-    // given props create a new deliverable in db and return
+    /**
+     * @param name
+     * @param price
+     * @return new Deliverable if insertion is successfull
+     */
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
         int newDid = getNextIdInt(primaryTable, "did");

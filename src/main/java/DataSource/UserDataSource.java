@@ -53,8 +53,15 @@ public class UserDataSource extends AbstractDataSource {
                 String userType = rs.getString("user_type");
                 UserType type = userTypeHashMap.get(userType);
                 Address a = getUserAddress(uid);
-                long bid = EmployeesDataSource.getInstance().getBranchIdOfEmployee(uid);
-                RestaurantBranch affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
+                long bid;
+                RestaurantBranch affiliatedBranch = null;
+                if (type == UserType.EMPLOYEE || type == UserType.MANAGER) {
+                    bid = EmployeesDataSource.getInstance().getBranchIdOfEmployee(uid);
+                    affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
+                } else {
+                    bid = 105;
+                    affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
+                }
                 // TODO: add membership points to db, discuss necessity of affiliated branch
                 u = new User(uid, username, password, name, surname, phoneNumber, a, type,
                         0, affiliatedBranch);
@@ -95,7 +102,6 @@ public class UserDataSource extends AbstractDataSource {
         }
         statement.append(String.format(" WHERE user_id=%d", id));
         updateColumnValues(primaryTable, statement.toString());
-
     }
 
     public void removeUserData(User user) {
@@ -103,11 +109,11 @@ public class UserDataSource extends AbstractDataSource {
         removeFromDb(primaryTable, String.format("user_id=%d", user_id));
     }
 
-    public Address getAddressFromTable(String tableName, long id) {
+    public Address getAddressFromTable(String tableName, String identifier) {
         Address a = null;
         try {
             Statement stmt = connection.createStatement();
-            String query = String.format("SELECT * FROM %s natural join Address WHERE user_id=%d", tableName, id);
+            String query = String.format("SELECT * FROM %s natural join Address WHERE %s", tableName, identifier);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
@@ -127,6 +133,6 @@ public class UserDataSource extends AbstractDataSource {
     }
 
     public Address getUserAddress(long uid) {
-        return getAddressFromTable(primaryTable, uid);
+        return getAddressFromTable(primaryTable, "user_id=" + uid);
     }
 }

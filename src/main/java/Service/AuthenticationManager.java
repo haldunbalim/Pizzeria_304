@@ -46,6 +46,9 @@ public class AuthenticationManager {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             return AuthStatus.AUTH_FAILED;
+        } catch (NullPointerException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            return AuthStatus.CONNECTION_ERROR;
         }
     }
 
@@ -74,6 +77,9 @@ public class AuthenticationManager {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             return AuthStatus.AUTH_FAILED;
+        } catch (NullPointerException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            return AuthStatus.CONNECTION_ERROR;
         }
     }
 

@@ -4,12 +4,11 @@ import Model.Order;
 
 import java.util.Date;
 
-public class OrderCustomerViewModel {
+public class OrderCustomerViewModel extends AbstractViewModel {
     public static String[] columnNames = {"Order", "Price", "Date", "Status"};
-    private Order model;
 
     public OrderCustomerViewModel(Order model) {
-        this.model = model;
+        super(model);
     }
 
     public static Class getColumnClassAt(int col) {
@@ -26,6 +25,8 @@ public class OrderCustomerViewModel {
     }
 
     public Object getColumnView(int col) {
+        Order model = ((Order) this.model);
+
         switch (col) {
             case 0:
                 return model.orderedItemsText();
@@ -39,7 +40,9 @@ public class OrderCustomerViewModel {
         return null;
     }
 
-    public Order getModel() {
-        return model;
+    @Override
+    public void setValueAt(int col, Object value) {
+        return;
     }
+
 }

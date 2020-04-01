@@ -2,16 +2,16 @@ package ViewModel;
 
 import Model.Vehicle;
 
-public class VehicleViewModel {
+public class VehicleViewModel extends AbstractViewModel {
 
     public static String[] columnNames = {"License Plate", "Brand", "Model", ""};
-    private Vehicle model;
 
     public VehicleViewModel(Vehicle model) {
-        this.model = model;
+        super(model);
     }
 
     public Object getColumnView(int col) {
+        Vehicle model = ((Vehicle) this.model);
         switch (col) {
             case 0:
                 return model.getLicensePlate();
@@ -25,11 +25,20 @@ public class VehicleViewModel {
         return null;
     }
 
-    public static Class getColumnClassAt(int col) {
-        return col == 3 ? Boolean.class : String.class;
+    @Override
+    public void setValueAt(int col, Object value) {
+        Vehicle model = ((Vehicle) this.model);
+        switch (col) {
+            case 0:
+                model.setLicensePlate((String) value);
+            case 1:
+                model.setBrand((String) value);
+            case 2:
+                model.setModel((String) value);
+        }
     }
 
-    public Vehicle getModel() {
-        return model;
+    public static Class getColumnClassAt(int col) {
+        return col == 3 ? Boolean.class : String.class;
     }
 }

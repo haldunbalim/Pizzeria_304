@@ -1,6 +1,6 @@
 package Model;
 
-public class Address {
+public class Address extends AbstractModel {
     private String city;
     private String streetName;
     private String postalCode;

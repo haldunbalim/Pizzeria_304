@@ -1,6 +1,6 @@
 package Model;
 
-public class Vehicle {
+public class Vehicle extends AbstractModel {
     private String licensePlate;
     private String model;
     private String brand;

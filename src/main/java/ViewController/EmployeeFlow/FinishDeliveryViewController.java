@@ -48,4 +48,5 @@ public class FinishDeliveryViewController extends AbstractViewController {
     public JPanel getMainPanel() {
         return mainPanel;
     }
+
 }

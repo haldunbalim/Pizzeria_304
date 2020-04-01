@@ -6,12 +6,12 @@ import Model.OrderState;
 import Model.Vehicle;
 import Reusable.ButtonRenderer;
 import ViewController.AbstractViewController;
+import ViewController.MyAbstractTableModel;
 import ViewModel.VehicleViewModel;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +28,6 @@ public class AssignVehicleViewController extends AbstractViewController implemen
     private AssignVehicleViewController() {
         configureUI();
         configureCancelButton();
-        mainPanel.setFocusable(true);
         table.getModel().addTableModelListener(this);
     }
 
@@ -77,33 +76,10 @@ public class AssignVehicleViewController extends AbstractViewController implemen
         return mainPanel;
     }
 
-    private class AssignVehiclesTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<VehicleViewModel> data = new ArrayList<>();
-
+    private class AssignVehiclesTableModel extends MyAbstractTableModel {
         public AssignVehiclesTableModel(ArrayList<Vehicle> data) {
             data.forEach(vehicle -> this.data.add(new VehicleViewModel(vehicle)));
             this.columnNames = VehicleViewModel.columnNames;
-        }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
-        }
-
-        public Class getColumnClass(int col) {
-            return VehicleViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {

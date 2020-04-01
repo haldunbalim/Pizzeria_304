@@ -1,6 +1,6 @@
 package Model;
 
-public class User {
+public class User extends AbstractModel {
 
     private long UID;
     private String username;

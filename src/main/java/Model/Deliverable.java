@@ -1,6 +1,6 @@
 package Model;
 
-public class Deliverable {
+public class Deliverable extends AbstractModel {
     private final int did;
     private String name;
     private Double price;

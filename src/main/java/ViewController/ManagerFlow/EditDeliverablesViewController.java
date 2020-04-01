@@ -4,31 +4,25 @@ import DataSource.DeliverableDataSource;
 import Model.Deliverable;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
-import ViewController.AbstractViewController;
-import ViewModel.DeliverableEditableViewModel;
+import ViewController.AbstractTableViewController;
+import ViewController.MyAbstractTableModel;
+import ViewModel.DeliverableManagerViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditDeliverablesViewController extends AbstractViewController implements TableModelListener {
+public class EditDeliverablesViewController extends AbstractTableViewController {
     private static EditDeliverablesViewController instance = new EditDeliverablesViewController();
-    private JPanel mainPanel;
-    private JTable table;
-    private EditDeliverablesTableModel tableModel;
     private DeliverableDataSource dataSource = DeliverableDataSource.getInstance();
     private ArrayList<Deliverable> deliverables;
+    protected JPanel mainPanel;
 
     private EditDeliverablesViewController() {
         deliverables = dataSource.getDeliverables();
         configureUI();
-        mainPanel.setFocusable(true);
-        table.getModel().addTableModelListener(this);
     }
 
     public static EditDeliverablesViewController getInstance() {
@@ -62,14 +56,13 @@ public class EditDeliverablesViewController extends AbstractViewController imple
                     Double price = Double.parseDouble(priceField.getText());
                     Deliverable deliverable = dataSource.createNewDeliverable(name, price);
                     deliverables.add(deliverable);
-                    tableModel.add(deliverable);
+                    ((EditDeliverablesTableModel) tableModel).add(deliverable);
                 } catch (NumberFormatException exception) {
                     priceField.setText("");
                     return;
                 }
             }
         });
-
 
         addNewPanel.add(nameField);
         addNewPanel.add(priceField);
@@ -83,87 +76,43 @@ public class EditDeliverablesViewController extends AbstractViewController imple
         tableModel = new EditDeliverablesTableModel(deliverables);
         table = new JTable(tableModel);
         table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        //  Remove row calls e.getColumn() = -1 ??
-        if (column < 0)
-            return;
-        String columnName = tableModel.getColumnName(column);
-        // Object data = tableModel.getValueAt(row, column); may be needed
-        if (columnName.equals("")) {
-            Deliverable removed = deliverables.remove(row);
-            tableModel.remove(row);
-            dataSource.removeDeliverableData(removed);
-            return;
-        }
-        dataSource.updateDeliverableData(deliverables.get(row));
+        addTable();
     }
 
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
-    private class EditDeliverablesTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<DeliverableEditableViewModel> data = new ArrayList<>();
-
+    private class EditDeliverablesTableModel extends MyAbstractTableModel {
         public EditDeliverablesTableModel(ArrayList<Deliverable> data) {
-            data.forEach(deliverable -> this.data.add(new DeliverableEditableViewModel(deliverable)));
-            this.columnNames = DeliverableEditableViewModel.columnNames;
-        }
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
-        }
-
-        public Class getColumnClass(int col) {
-            return DeliverableEditableViewModel.getColumnClassAt(col);
+            data.forEach(deliverable -> this.data.add(new DeliverableManagerViewModel(deliverable)));
+            this.columnNames = DeliverableManagerViewModel.columnNames;
         }
 
         public boolean isCellEditable(int row, int col) {
             return true;
         }
 
+        public void add(Deliverable deliverable) {
+            this.data.add(new DeliverableManagerViewModel(deliverable));
+            this.fireTableDataChanged();
+        }
+
+        public Class getColumnClass(int col) {
+            return DeliverableManagerViewModel.getColumnClassAt(col);
+        }
+
+        @Override
         public void setValueAt(Object value, int row, int col) {
-            switch (col) {
-                case 0:
-                    this.data.get(row).getModel().setName((String) value);
-                    break;
-                case 1:
-                    this.data.get(row).getModel().setPrice((Double) value);
-                    break;
+            if (col == getColumnCount() - 1) {
+                Deliverable removed = deliverables.remove(row);
+                tableModel.remove(row);
+                dataSource.removeDeliverableData(removed);
+            } else {
+                this.data.get(row).setValueAt(col, value);
+                dataSource.updateDeliverableData(deliverables.get(row));
             }
             fireTableCellUpdated(row, col);
-        }
-
-        public void remove(int row) {
-            this.data.remove(row);
-            this.fireTableRowsDeleted(row, row);
-        }
-
-        public void add(Deliverable deliverable) {
-            this.data.add(new DeliverableEditableViewModel(deliverable));
-            this.fireTableDataChanged();
         }
     }
 

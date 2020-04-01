@@ -1,11 +1,11 @@
 package Service;
 
 
+import ViewController.CommonFlow.LoginViewController;
+import ViewController.CommonFlow.SetProfilePage;
 import ViewController.CustomerFlow.CustomerTabs;
 import ViewController.EmployeeFlow.EmployeeTabs;
-import ViewController.LoginViewController;
 import ViewController.ManagerFlow.ManagerTabs;
-import ViewController.SetProfilePage;
 import database.DatabaseConnectionHandler;
 
 import javax.swing.*;
@@ -40,9 +40,6 @@ public class Coordinator {
         switch (screen) {
             case LOGIN:
                 frame.setContentPane(LoginViewController.getInstance().getMainPanel());
-                break;
-            case ORDER:
-                frame.setContentPane(SetProfilePage.getInstance().getMainPanel());
                 break;
             case MANAGER_TABS:
                 frame.setContentPane(ManagerTabs.getInstance());

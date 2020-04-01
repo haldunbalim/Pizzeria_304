@@ -2,13 +2,12 @@ package ViewModel;
 
 import Model.Deliverable;
 
-public class DeliverableCustomerViewModel {
+public class DeliverableCustomerViewModel extends AbstractViewModel {
     public static String[] columnNames = {"Name", "Price", "Amount", "Add", "Remove"};
-    private Deliverable model;
     private int amount = 0;
 
     public DeliverableCustomerViewModel(Deliverable model) {
-        this.model = model;
+        super(model);
     }
 
     public static Class getColumnClassAt(int col) {
@@ -26,6 +25,8 @@ public class DeliverableCustomerViewModel {
     }
 
     public Object getColumnView(int col) {
+        Deliverable model = ((Deliverable) this.model);
+
         switch (col) {
             case 0:
                 return model.getName();
@@ -40,8 +41,9 @@ public class DeliverableCustomerViewModel {
         return null;
     }
 
-    public Deliverable getModel() {
-        return model;
+    @Override
+    public void setValueAt(int col, Object value) {
+
     }
 
     public void incrementAmount() {

@@ -4,31 +4,26 @@ import DataSource.EmployeesDataSource;
 import Model.User;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
-import ViewController.AbstractViewController;
-import ViewModel.UserEditableViewModel;
+import ViewController.AbstractTableViewController;
+import ViewController.MyAbstractTableModel;
+import ViewModel.UserManagerViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EditEmployeesViewController extends AbstractViewController implements TableModelListener {
+public class EditEmployeesViewController extends AbstractTableViewController {
     private static EditEmployeesViewController instance = new EditEmployeesViewController();
     private JPanel mainPanel;
-    private JTable table;
-    private EditEmployeesTableModel tableModel;
     private EmployeesDataSource dataSource = EmployeesDataSource.getInstance();
     private ArrayList<User> employees;
+    private JLabel errorLabel;
 
     private EditEmployeesViewController() {
         employees = dataSource.getEmployees();
         configureUI();
-        mainPanel.setFocusable(true);
-        table.getModel().addTableModelListener(this);
     }
 
     public static EditEmployeesViewController getInstance() {
@@ -38,6 +33,17 @@ public class EditEmployeesViewController extends AbstractViewController implemen
     private void configureUI() {
         configureTable();
         configureAddPanel();
+        configureErrorLabel();
+    }
+
+    private void configureErrorLabel() {
+        errorLabel = new JLabel();
+        mainPanel.add(errorLabel, BorderLayout.NORTH);
+    }
+
+    private void showError(String st) {
+        errorLabel.setText(st);
+        errorLabel.setVisible(true);
     }
 
     private void configureAddPanel() {
@@ -59,7 +65,9 @@ public class EditEmployeesViewController extends AbstractViewController implemen
                 if (username.equals("Username") || password.equals("Password")) {
                     return;
                 }
-                dataSource.createNewUser(username, password);
+                if (dataSource.createNewUser(username, password) == null) {
+                    showError("User with " + username + " already exists");
+                }
             }
         });
 
@@ -77,68 +85,36 @@ public class EditEmployeesViewController extends AbstractViewController implemen
         table = new JTable(tableModel);
         table.getColumn("").setCellRenderer(new ButtonRenderer("Remove"));
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        int column = e.getColumn();
-        //  Remove row calls e.getColumn() = -1 ??
-        if (column < 0)
-            return;
-
-        User removed = employees.remove(row);
-        tableModel.remove(row);
-        dataSource.removeUserData(removed);
+        addTable();
     }
 
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
-    private class EditEmployeesTableModel extends AbstractTableModel {
-        private String[] columnNames;
-        private ArrayList<UserEditableViewModel> data = new ArrayList<>();
-
+    private class EditEmployeesTableModel extends MyAbstractTableModel {
         EditEmployeesTableModel(ArrayList<User> data) {
-            data.forEach(user -> this.data.add(new UserEditableViewModel(user)));
-            this.columnNames = UserEditableViewModel.columnNames;
+            data.forEach(user -> this.data.add(new UserManagerViewModel(user)));
+            this.columnNames = UserManagerViewModel.columnNames;
         }
 
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.size();
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data.get(row).getColumnView(col);
-        }
-
+        @Override
         public Class getColumnClass(int col) {
-            return UserEditableViewModel.getColumnClassAt(col);
+            return UserManagerViewModel.getColumnClassAt(col);
         }
 
         public boolean isCellEditable(int row, int col) {
             return col == getColumnCount() - 1;
         }
 
-        public void remove(int row) {
-            this.data.remove(row);
-            this.fireTableRowsDeleted(row, row);
-        }
-
+        @Override
         public void setValueAt(Object value, int row, int col) {
-            fireTableCellUpdated(row, col);
+            if (col == getColumnCount() - 1) {
+                User removed = employees.remove(row);
+                tableModel.remove(row);
+                dataSource.removeUserData(removed);
+                fireTableCellUpdated(row, col);
+            }
         }
     }
 

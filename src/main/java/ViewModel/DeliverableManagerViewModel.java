@@ -2,17 +2,17 @@ package ViewModel;
 
 import Model.Deliverable;
 
-public class DeliverableEditableViewModel {
+public class DeliverableManagerViewModel extends AbstractViewModel {
 
 
     public static String[] columnNames = {"Name", "Price", ""};
-    private Deliverable model;
 
-    public DeliverableEditableViewModel(Deliverable model) {
-        this.model = model;
+    public DeliverableManagerViewModel(Deliverable model) {
+        super(model);
     }
 
     public Object getColumnView(int col) {
+        Deliverable model = ((Deliverable) this.model);
         switch (col) {
             case 0:
                 return model.getName();
@@ -22,6 +22,17 @@ public class DeliverableEditableViewModel {
                 return false;
         }
         return null;
+    }
+
+    @Override
+    public void setValueAt(int col, Object value) {
+        Deliverable model = ((Deliverable) this.model);
+        switch (col) {
+            case 0:
+                model.setName((String) value);
+            case 1:
+                model.setPrice((Double) value);
+        }
     }
 
     public static Class getColumnClassAt(int col) {
@@ -34,10 +45,6 @@ public class DeliverableEditableViewModel {
                 return Boolean.class;
         }
         return null;
-    }
-
-    public Deliverable getModel() {
-        return model;
     }
 
 

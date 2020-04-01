@@ -2,8 +2,8 @@ package ViewController.EmployeeFlow;
 
 import Model.Order;
 import Model.Vehicle;
-import ViewController.ProfileViewController;
-import ViewController.SetProfilePage;
+import ViewController.CommonFlow.ProfileViewController;
+import ViewController.CommonFlow.SetProfilePage;
 
 import javax.swing.*;
 

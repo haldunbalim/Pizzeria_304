@@ -1,6 +1,7 @@
 package DataSource;
 
 import Model.Address;
+import Model.RestaurantBranch;
 import Model.User;
 import Model.UserType;
 
@@ -14,17 +15,17 @@ public class UserDataSource extends AbstractDataSource {
     private static UserDataSource instance = new UserDataSource();
     private HashMap<String, UserType> userTypeHashMap = new HashMap<String, UserType>() {
         {
-            put("CUSTOMER", UserType.CUSTOMER);
-            put("MANAGER", UserType.MANAGER);
-            put("EMPLOYEE", UserType.EMPLOYEE);
+            put("customer", UserType.CUSTOMER);
+            put("manager", UserType.MANAGER);
+            put("employee", UserType.EMPLOYEE);
         }
     };
 
     private HashMap<UserType, String> userTypeHashMapReversed = new HashMap<UserType, String>() {
         {
-            put(UserType.CUSTOMER, "CUSTOMER");
-            put(UserType.MANAGER, "MANAGER");
-            put(UserType.EMPLOYEE, "EMPLOYEE");
+            put(UserType.CUSTOMER, "customer");
+            put(UserType.MANAGER, "manager");
+            put(UserType.EMPLOYEE, "employee");
         }
     };
 
@@ -52,9 +53,11 @@ public class UserDataSource extends AbstractDataSource {
                 String userType = rs.getString("user_type");
                 UserType type = userTypeHashMap.get(userType);
                 Address a = getUserAddress(uid);
+                long bid = EmployeesDataSource.getInstance().getBranchIdOfEmployee(uid);
+                RestaurantBranch affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
                 // TODO: add membership points to db, discuss necessity of affiliated branch
                 u = new User(uid, username, password, name, surname, phoneNumber, a, type,
-                        0, null);
+                        0, affiliatedBranch);
             }
             rs.close();
             stmt.close();
@@ -100,11 +103,11 @@ public class UserDataSource extends AbstractDataSource {
         removeFromDb(primaryTable, String.format("user_id=%d", user_id));
     }
 
-    public Address getUserAddress(long uid) {
+    public Address getAddressFromTable(String tableName, long id) {
         Address a = null;
         try {
             Statement stmt = connection.createStatement();
-            String query = String.format("SELECT * FROM %s natural join Address WHERE user_id=%d", primaryTable, uid);
+            String query = String.format("SELECT * FROM %s natural join Address WHERE user_id=%d", tableName, id);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
@@ -121,5 +124,9 @@ public class UserDataSource extends AbstractDataSource {
             System.out.println(e.getMessage());
         }
         return a;
+    }
+
+    public Address getUserAddress(long uid) {
+        return getAddressFromTable(primaryTable, uid);
     }
 }

@@ -1,31 +1,31 @@
 INSERT INTO Users
-VALUES (37967366135, 'Susan', 'Avery', 'susanavery', '001-436-409-9831x72616', '(8P)wDrE)z', 'CUSTOMER');
+VALUES (37967366135, 'Susan', 'Avery', 'susanavery', '001-436-409-9831x72616', '(8P)wDrE)z', 'customer');
 INSERT INTO Users
-VALUES (57190774585, 'Antonio', 'Obrien', 'antonioobrien', '767-177-4557', 'b+2Xsnr0))', 'CUSTOMER');
+VALUES (57190774585, 'Antonio', 'Obrien', 'antonioobrien', '767-177-4557', 'b+2Xsnr0))', 'customer');
 INSERT INTO Users
-VALUES (87301800085, 'Kristin', 'Love', 'kristinlove', '889-973-0991', '@f1FZUyD+1', 'CUSTOMER');
+VALUES (87301800085, 'Kristin', 'Love', 'kristinlove', '889-973-0991', '@f1FZUyD+1', 'customer');
 -- INSERT INTO Users VALUES (20437982648, 'Abigail', 'Horn',  'abigailhorn',  '496.680.8629', 'e&24wDTrnf', 'CUSTOMER');
 -- INSERT INTO Users VALUES (83686353736, 'Renee', 'Frey', 'reneefrey',  '+1-395-019-7158x50039', ')OF6tTVzu0', 'CUSTOMER');
 INSERT INTO Users
-VALUES (99127443217, 'Jeffrey', 'Ballard', 'jeffreyballard', '001-703-439-5413x58066', '4RdrqDWq+P'), 'CUSTOMER';
+VALUES (99127443217, 'Jeffrey', 'Ballard', 'jeffreyballard', '001-703-439-5413x58066', '4RdrqDWq+P', 'customer');
 INSERT INTO Users
-VALUES (30876994580, 'Justin', 'Davis', 'justindavis', '857-192-6362x9509', '_3fBiZL6h2', 'CUSTOMER');
+VALUES (30876994580, 'Justin', 'Davis', 'justindavis', '857-192-6362x9509', '_3fBiZL6h2', 'customer');
 INSERT INTO Users
-VALUES (25757763306, 'Michelle', 'Parrish', 'michelleparrish', '423-722-6747x705', 'k!(5KASq(o', 'CUSTOMER');
+VALUES (25757763306, 'Michelle', 'Parrish', 'michelleparrish', '423-722-6747x705', 'k!(5KASq(o', 'customer');
 INSERT INTO Users
-VALUES (36045244890, 'Christopher', 'Blanchard', 'christopherblanchard', '343-305-6803x6669', 'wOS9*O6d1!', 'CUSTOMER');
+VALUES (36045244890, 'Christopher', 'Blanchard', 'christopherblanchard', '343-305-6803x6669', 'wOS9*O6d1!', 'customer');
 INSERT INTO Users
-VALUES (42033432168, 'Lacey', 'Green', 'laceygreen', '(099)248-0593x3769', '9Dn81OSo2_', 'CUSTOMER');
+VALUES (42033432168, 'Lacey', 'Green', 'laceygreen', '(099)248-0593x3769', '9Dn81OSo2_', 'customer');
 INSERT INTO Users
-VALUES (11111111111, 'Alex', 'Grey', 'alexgrey', '(099)248-0593x3770', '9Dn81OSo3_', 'EMPLOYEE');
+VALUES (11111111111, 'Alex', 'Grey', 'alexgrey', '(099)248-0593x3770', '9Dn81OSo3_', 'employee');
 INSERT INTO Users
-VALUES (22222222222, 'Alexa', 'Brown', 'alexabrown', '(099)248-0593x3771', '9Dn81OSo4_', 'EMPLOYEE');
+VALUES (22222222222, 'Alexa', 'Brown', 'alexabrown', '(099)248-0593x3771', '9Dn81OSo4_', 'employee');
 INSERT INTO Users
-VALUES (33333333333, 'Jack', 'Black', 'jackblack', '(099)248-0593x3772', '9Dn81OSo5_', 'EMPLOYEE');
+VALUES (33333333333, 'Jack', 'Black', 'jackblack', '(099)248-0593x3772', '9Dn81OSo5_', 'employee');
 INSERT INTO Users
-VALUES (44444444444, 'Adam', 'Lotus', 'adamlotus', '(099)248-0593x3773', '9Dn81OSo6_', 'EMPLOYEE');
+VALUES (44444444444, 'Adam', 'Lotus', 'adamlotus', '(099)248-0593x3773', '9Dn81OSo6_', 'employee');
 INSERT INTO Users
-VALUES (55555555555, 'Alo', 'low', 'alolow', '(099)248-0593x3774', '9Dn81OSo7_', 'MANAGER');
+VALUES (55555555555, 'Alo', 'low', 'alolow', '(099)248-0593x3774', '9Dn81OSo7_', 'manager');
 
 ----------------------------------------------------------------
 
@@ -195,15 +195,15 @@ VALUES ('Supra', 'Toyota');
 ------------------------------------------------------------------------------------------------
 
 INSERT INTO Vehicle
-VALUES ('VWE 653', 'Mustang');
+VALUES ('VWE 653', 'Mustang', 'Y');
 INSERT INTO Vehicle
-VALUES ('FGA 870', 'Iron 883');
+VALUES ('FGA 870', 'Iron 883', 'Y');
 INSERT INTO Vehicle
-VALUES ('RVZ 897', 'Mustang');
+VALUES ('RVZ 897', 'Mustang', 'Y');
 INSERT INTO Vehicle
-VALUES ('FFV 166', 'Mustang');
+VALUES ('FFV 166', 'Mustang', 'Y');
 INSERT INTO Vehicle
-VALUES ('WNS 253', 'Supra');
+VALUES ('WNS 253', 'Supra', 'Y');
 
 ------------------------------------------------------------------------------------------------
 INSERT INTO Menu
@@ -218,9 +218,12 @@ VALUES (15, 'Gotham', 4.10);
 --INSERT INTO Menu VALUES (17, 'Salem', 9.54);
 INSERT INTO Menu
 VALUES (18, 'Jaskirat''s Special', 9.39);
---INSERT INTO Menu VALUES (19, 'Haldun''s Date', 7.98);
---INSERT INTO Menu VALUES (16, 'Sustainable', 9.05);
---INSERT INTO Menu VALUES (20, 'Gul''s Dream', 21.09);
+INSERT INTO Menu
+VALUES (19, 'Haldun''s Date', 7.98);
+INSERT INTO Menu
+VALUES (16, 'Sustainable', 9.05);
+INSERT INTO Menu
+VALUES (20, 'Gul''s Dream', 21.09);
 --delete from MENU where MID=11;
 --select * from BRANCH;
 ------------------------------------------------------------------------------------------------

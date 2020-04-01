@@ -1,5 +1,6 @@
 package Service;
 
+import DataSource.UserDataSource;
 import Model.User;
 import database.DatabaseConnectionHandler;
 
@@ -58,18 +59,21 @@ public class AuthenticationManager {
         try {
             Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
 
-            String statement = "SELECT password FROM USERS WHERE USERNAME='" + username + "'";
+            String statement = "SELECT user_id, password FROM USERS WHERE USERNAME='" + username + "'";
             ResultSet rs = stmt.executeQuery(statement);
 
             String userPassword = "";
+            long userId = 0;
             while (rs.next()) {
+                userId = rs.getLong("user_id");
                 userPassword = rs.getString("password");
             }
             rs.close();
             stmt.close();
 
-            if (password.equalsIgnoreCase(userPassword)) {
+            if (password.equals(userPassword)) {
                 //currentUser = new User(username, password);
+                currentUser = UserDataSource.getInstance().getUser(userId);
                 return AuthStatus.AUTH_SUCCESSFUL;
             } else {
                 return AuthStatus.AUTH_FAILED;

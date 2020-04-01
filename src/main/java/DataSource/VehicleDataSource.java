@@ -50,7 +50,6 @@ public class VehicleDataSource extends AbstractDataSource {
                 String availability = rs.getString("availability");
                 boolean avail = availabilityHasMap.get(availability);
 
-                // TODO: Available Field added to vehicle
                 list.add(new Vehicle(licensePlate, model, brand, avail));
             }
             rs.close();

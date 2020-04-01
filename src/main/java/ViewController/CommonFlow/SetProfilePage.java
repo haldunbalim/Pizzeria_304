@@ -1,10 +1,10 @@
 package ViewController.CommonFlow;
 
+import DataSource.AuthenticationManager;
 import DataSource.UserDataSource;
 import Model.Address;
 import Model.User;
 import Model.UserType;
-import Service.AuthenticationManager;
 import Service.Coordinator;
 import Service.ScreenEnum;
 import ViewController.AbstractViewController;

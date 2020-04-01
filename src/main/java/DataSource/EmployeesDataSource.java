@@ -3,7 +3,6 @@ package DataSource;
 import Model.Address;
 import Model.RestaurantBranch;
 import Model.User;
-import Service.AuthenticationManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

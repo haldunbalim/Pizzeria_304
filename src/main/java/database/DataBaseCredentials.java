@@ -33,6 +33,7 @@ public class DataBaseCredentials {
     public enum OperationResult {
         inserted,
         insertionFailed,
+        integrityConstraintError,
         deleted,
         deletionFailed,
         updated,

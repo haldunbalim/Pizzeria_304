@@ -1,7 +1,6 @@
 package DataSource;
 
 import Model.*;
-import Service.AuthenticationManager;
 import database.DataBaseCredentials;
 
 import java.sql.PreparedStatement;

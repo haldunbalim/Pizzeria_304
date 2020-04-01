@@ -66,14 +66,15 @@ public class DeliverableDataSource extends AbstractDataSource {
     // given props create a new deliverable in db and return
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
-        int newDid = getNextId(primaryTable, "did");
+        int newDid = getNextIdInt(primaryTable, "did");
 
         DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable,
                 String.format(Locale.CANADA, "%d, '%s', %.2f", newDid, name, price)
         );
+        // TODO: new item is added to the db but doesn't appear automatically
         if (res == DataBaseCredentials.OperationResult.inserted) {
             double priceWithTwoDecimals = Double.parseDouble(String.format("%.2f", price));
-            d = new Deliverable(newDid, name, price);
+            d = new Deliverable(newDid, name, priceWithTwoDecimals);
         }
         return d;
     }

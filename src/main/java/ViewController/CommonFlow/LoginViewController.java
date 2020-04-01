@@ -1,9 +1,9 @@
 package ViewController.CommonFlow;
 
+import DataSource.AuthStatus;
+import DataSource.AuthenticationManager;
 import Model.UserType;
 import Reusable.PlaceholderFocusListener;
-import Service.AuthStatus;
-import Service.AuthenticationManager;
 import Service.Coordinator;
 import Service.ScreenEnum;
 import ViewController.AbstractViewController;

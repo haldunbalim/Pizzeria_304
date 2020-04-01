@@ -1,54 +1,42 @@
-package Service;
+package DataSource;
 
-import DataSource.UserDataSource;
 import Model.User;
+import database.DataBaseCredentials;
 import database.DatabaseConnectionHandler;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import static database.DataBaseCredentials.EXCEPTION_TAG;
 
-public class AuthenticationManager {
+public class AuthenticationManager extends AbstractDataSource {
 
     private static AuthenticationManager instance = new AuthenticationManager();
     private User currentUser;
 
-    private DatabaseConnectionHandler dbHandler = DatabaseConnectionHandler.getInstance();
 
     private AuthenticationManager() {
-        //dbHandler.connectToDatabase();
+        primaryTable = "Users";
     }
 
     public static AuthenticationManager getInstance() {
         return instance;
     }
 
-    // TODO: create user from User class, for now hard coded
-    // TODO: change user_id's to be sequentially starting from
+
     // returns info about Authentication Status
     // call login after signUp is successfully complete
     public AuthStatus signUp(String username, String password) {
-        long newId = 0;
-        try {
-            Connection c = DatabaseConnectionHandler.getConnection();
-            Statement stmt = c.createStatement();
-
-            long newID = assignUserIdD();
-            String statement = String.format("INSERT INTO Users Values (%d, '%s', '%s', '%s', null, '%s', null)",
-                    newID, "name", "surname", username, password);
-            stmt.execute(statement);
-            c.commit();
-            stmt.close();
-
+        long newId = getNextIdLong(primaryTable, "user_id");
+        String statement = String.format("%d, '%s', '%s', '%s', null, '%s', '%s'",
+                newId, "name", "surname", username, password, "customer");
+        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, statement);
+        if (res == DataBaseCredentials.OperationResult.inserted) {
             return AuthStatus.NEW_REGISTRATION;
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        } else if (res == DataBaseCredentials.OperationResult.integrityConstraintError) {
             return AuthStatus.AUTH_FAILED;
-        } catch (NullPointerException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        } else {
             return AuthStatus.CONNECTION_ERROR;
         }
     }
@@ -57,7 +45,7 @@ public class AuthenticationManager {
     // record currentUser as a property of the class
     public AuthStatus login(String username, String password) {
         try {
-            Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
+            Statement stmt = connection.createStatement();
 
             String statement = "SELECT user_id, password FROM USERS WHERE USERNAME='" + username + "'";
             ResultSet rs = stmt.executeQuery(statement);

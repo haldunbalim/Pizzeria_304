@@ -2,10 +2,7 @@ package DataSource;
 
 import database.DatabaseConnectionHandler;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
@@ -31,6 +28,9 @@ abstract class AbstractDataSource {
 
             return OperationResult.inserted;
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            System.out.println(EXCEPTION_TAG + e.getMessage());
+            return OperationResult.integrityConstraintError;
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + e.getMessage());
             return OperationResult.insertionFailed;
@@ -59,7 +59,7 @@ abstract class AbstractDataSource {
 
     }
 
-    protected int getNextId(String tableName, String primaryKey) {
+    protected int getNextIdInt(String tableName, String primaryKey) {
         int nextId = 1;
         ArrayList<Integer> takenIds = new ArrayList<Integer>();
         try {
@@ -76,6 +76,33 @@ abstract class AbstractDataSource {
             int low = (int) Math.pow(10, Math.floor(Math.log10(takenIds.get(0))));
             while (takenIds.contains(nextId)) {
                 nextId = new Random().nextInt(high - low) + low;
+            }
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return nextId;
+    }
+
+    protected long getNextIdLong(String tableName, String primaryKey) {
+        long nextId = 1;
+        ArrayList<Long> takenIds = new ArrayList<Long>();
+        try {
+            Statement stmt = connection.createStatement();
+            // Oracle DB uses FETCH NEXT row_number ROWS ONLY
+            String query = String.format("SELECT %s FROM %s ORDER BY %s", primaryKey, tableName, primaryKey);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                takenIds.add(rs.getLong(primaryKey));
+            }
+            nextId = takenIds.get(0);
+            long high = (long) Math.pow(10, Math.ceil(Math.log10(takenIds.get(0)))) - 1;
+            long low = (long) Math.pow(10, Math.floor(Math.log10(takenIds.get(0))));
+            while (takenIds.contains(nextId)) {
+                nextId = (long) (Math.random() * (high - low)) + low;
             }
             rs.close();
             stmt.close();

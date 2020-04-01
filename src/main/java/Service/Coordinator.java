@@ -11,7 +11,7 @@ import database.DatabaseConnectionHandler;
 import javax.swing.*;
 
 public class Coordinator {
-    private static final ScreenEnum initialPage = ScreenEnum.MANAGER_TABS;
+    private static final ScreenEnum initialPage = ScreenEnum.LOGIN;
     private static Coordinator instance = new Coordinator();
     private JFrame frame = new JFrame();
     private ScreenEnum currentScreen;

@@ -30,12 +30,13 @@ public class AuthenticationManager {
     // returns info about Authentication Status
     // call login after signUp is successfully complete
     public AuthStatus signUp(String username, String password) {
+        long newId = 0;
         try {
             Connection c = DatabaseConnectionHandler.getConnection();
             Statement stmt = c.createStatement();
 
             long newID = assignUserIdD();
-            String statement = String.format("INSERT INTO Users Values (%d, '%s', '%s', '%s', null, '%s')",
+            String statement = String.format("INSERT INTO Users Values (%d, '%s', '%s', '%s', null, '%s', null)",
                     newID, "name", "surname", username, password);
             stmt.execute(statement);
             c.commit();

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import static database.DataBaseCredentials.*;
@@ -22,7 +23,7 @@ abstract class AbstractDataSource {
     protected OperationResult insertIntoDb (String tableName, String values) {
         try {
             //int newDid = getNextId("DELIVERABLE", "did");
-            String statement = String.format("INSERT INTO %s VALUES (%s)", tableName, values);
+            String statement = String.format(Locale.CANADA, "INSERT INTO %s VALUES (%s)", tableName, values);
             Statement stmt = connection.createStatement();
             stmt.executeUpdate(statement);
             stmt.close();
@@ -31,29 +32,30 @@ abstract class AbstractDataSource {
             return OperationResult.inserted;
 
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + insertionError);
+            System.out.println(EXCEPTION_TAG + e.getMessage());
             return OperationResult.insertionFailed;
         }
     }
+
     // pass the primaryKeys as a formatted String
     protected OperationResult removeFromDb (String tableName, String primaryKeys) {
-            try {
-                String statement = String.format("DELETE FROM %s WHERE %s", tableName, primaryKeys);
-                // remove the unnecessary comma at the end
-                Statement stmt = connection.createStatement();
-                int rowCount = stmt.executeUpdate(statement);
+        try {
+            String statement = String.format("DELETE FROM %s WHERE %s", tableName, primaryKeys);
+            // remove the unnecessary comma at the end
+            Statement stmt = connection.createStatement();
+            int rowCount = stmt.executeUpdate(statement);
 
-                if (rowCount == 0) {
-                    System.out.println(WARNING_TAG + notFound);
-                }
-                connection.commit();
-                stmt.close();
-
-                return OperationResult.deleted;
-            } catch (SQLException e) {
-                System.out.println(EXCEPTION_TAG + deleteError);
-                return OperationResult.deletionFailed;
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + notFound);
             }
+            connection.commit();
+            stmt.close();
+
+            return OperationResult.deleted;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + deleteError);
+            return OperationResult.deletionFailed;
+        }
 
     }
 
@@ -88,4 +90,48 @@ abstract class AbstractDataSource {
         return primaryTable;
     }
 
+    public String getCityFromPostalCode(String pc) {
+        String city = "";
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT city FROM CITYPOSTALCODE WHERE postalcode='%s'", pc);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                city = rs.getString("city");
+            }
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+
+        }
+        return city;
+    }
+
+    /**
+     * @param tableName String
+     * @param columns   specify the sql statement after SET eg. col1=val1, col2=val2 where colx=valx
+     * @return
+     */
+    protected OperationResult updateColumnValues(String tableName, String columns) {
+        try {
+            Statement stmt = connection.createStatement();
+            String statement = String.format("UPDATE %s SET %s", tableName, columns);
+
+            int rowCount = stmt.executeUpdate(statement);
+
+            connection.commit();
+            stmt.close();
+
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + notFound);
+                return OperationResult.noElementUpdated;
+            }
+            return OperationResult.updated;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + e.getMessage());
+            return OperationResult.updateFailed;
+        }
+    }
 }

@@ -3,11 +3,11 @@ package DataSource;
 import Model.Deliverable;
 import database.DataBaseCredentials;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DeliverableDataSource extends AbstractDataSource {
 
@@ -50,22 +50,8 @@ public class DeliverableDataSource extends AbstractDataSource {
         String name = deliverable.getName();
         double p = deliverable.getPrice();
         float price = (float) p;
-        try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE DELIVERABLE SET " +
-                    "name = ?, price = ? WHERE did = ?");
-            ps.setString(1, name);
-            ps.setFloat(2, price);
-            ps.setInt(3, did);
-
-            int rowCount = ps.executeUpdate();
-            if (rowCount == 0) {
-                System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.deliverableNotFound);
-            }
-            connection.commit();
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.updateError);
-        }
+        String values = String.format(Locale.CANADA, "name='%s', price=%.2f WHERE did=%d", name, price, did);
+        updateColumnValues(primaryTable, values);
     }
 
     // given an deliverable model removes it from the db
@@ -74,41 +60,19 @@ public class DeliverableDataSource extends AbstractDataSource {
         removeFromDb(primaryTable, String.format("did=%d", did));
 
         // TODO: if db deletion fails don't allow the object to be deleted
-//
-//        try {
-//            PreparedStatement ps = connection.prepareStatement("DELETE FROM DELIVERABLE WHERE " +
-//                    "did = ?");
-//            ps.setInt(1, did);
-//
-//            int rowCount = ps.executeUpdate();
-//            if (rowCount == 0) {
-//                System.out.println(DataBaseCredentials.WARNING_TAG + DataBaseCredentials.deliverableNotFound);
-//            }
-//            connection.commit();
-//            ps.close();
-//        } catch (SQLException e) {
-//            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.deleteError);
-//        }
+        // We get all the deliverable info from the db this shouldn't be a problem -gs
     }
 
     // given props create a new deliverable in db and return
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
-        try {
-            int newDid = getNextId(primaryTable, "did");
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO DELIVERABLE VALUES (?, ?, ?)");
-            ps.setString(2, name);
-            ps.setDouble(3, price);
-            ps.setInt(1, newDid);
+        int newDid = getNextId(primaryTable, "did");
 
-            ps.executeUpdate();
-            ps.close();
-            connection.commit();
-
+        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable,
+                String.format(Locale.CANADA, "%d, '%s', %.2f", newDid, name, price)
+        );
+        if (res == DataBaseCredentials.OperationResult.inserted) {
             d = new Deliverable(newDid, name, price);
-
-        } catch (SQLException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.insertionError);
         }
         return d;
     }

@@ -1,31 +1,31 @@
 INSERT INTO Users
-VALUES (37967366135, 'Susan', 'Avery', 'susanavery', '001-436-409-9831x72616', '(8P)wDrE)z');
+VALUES (37967366135, 'Susan', 'Avery', 'susanavery', '001-436-409-9831x72616', '(8P)wDrE)z', 'CUSTOMER');
 INSERT INTO Users
-VALUES (57190774585, 'Antonio', 'Obrien', 'antonioobrien', '767-177-4557', 'b+2Xsnr0))');
+VALUES (57190774585, 'Antonio', 'Obrien', 'antonioobrien', '767-177-4557', 'b+2Xsnr0))', 'CUSTOMER');
 INSERT INTO Users
-VALUES (87301800085, 'Kristin', 'Love', 'kristinlove', '889-973-0991', '@f1FZUyD+1');
--- INSERT INTO Users VALUES (20437982648, 'Abigail', 'Horn',  'abigailhorn',  '496.680.8629', 'e&24wDTrnf');
--- INSERT INTO Users VALUES (83686353736, 'Renee', 'Frey', 'reneefrey',  '+1-395-019-7158x50039', ')OF6tTVzu0');
+VALUES (87301800085, 'Kristin', 'Love', 'kristinlove', '889-973-0991', '@f1FZUyD+1', 'CUSTOMER');
+-- INSERT INTO Users VALUES (20437982648, 'Abigail', 'Horn',  'abigailhorn',  '496.680.8629', 'e&24wDTrnf', 'CUSTOMER');
+-- INSERT INTO Users VALUES (83686353736, 'Renee', 'Frey', 'reneefrey',  '+1-395-019-7158x50039', ')OF6tTVzu0', 'CUSTOMER');
 INSERT INTO Users
-VALUES (99127443217, 'Jeffrey', 'Ballard', 'jeffreyballard', '001-703-439-5413x58066', '4RdrqDWq+P');
+VALUES (99127443217, 'Jeffrey', 'Ballard', 'jeffreyballard', '001-703-439-5413x58066', '4RdrqDWq+P'), 'CUSTOMER';
 INSERT INTO Users
-VALUES (30876994580, 'Justin', 'Davis', 'justindavis', '857-192-6362x9509', '_3fBiZL6h2');
+VALUES (30876994580, 'Justin', 'Davis', 'justindavis', '857-192-6362x9509', '_3fBiZL6h2', 'CUSTOMER');
 INSERT INTO Users
-VALUES (25757763306, 'Michelle', 'Parrish', 'michelleparrish', '423-722-6747x705', 'k!(5KASq(o');
+VALUES (25757763306, 'Michelle', 'Parrish', 'michelleparrish', '423-722-6747x705', 'k!(5KASq(o', 'CUSTOMER');
 INSERT INTO Users
-VALUES (36045244890, 'Christopher', 'Blanchard', 'christopherblanchard', '343-305-6803x6669', 'wOS9*O6d1!');
+VALUES (36045244890, 'Christopher', 'Blanchard', 'christopherblanchard', '343-305-6803x6669', 'wOS9*O6d1!', 'CUSTOMER');
 INSERT INTO Users
-VALUES (42033432168, 'Lacey', 'Green', 'laceygreen', '(099)248-0593x3769', '9Dn81OSo2_');
+VALUES (42033432168, 'Lacey', 'Green', 'laceygreen', '(099)248-0593x3769', '9Dn81OSo2_', 'CUSTOMER');
 INSERT INTO Users
-VALUES (11111111111, 'Alex', 'Grey', 'alexgrey', '(099)248-0593x3770', '9Dn81OSo3_');
+VALUES (11111111111, 'Alex', 'Grey', 'alexgrey', '(099)248-0593x3770', '9Dn81OSo3_', 'EMPLOYEE');
 INSERT INTO Users
-VALUES (22222222222, 'Alexa', 'Brown', 'alexabrown', '(099)248-0593x3771', '9Dn81OSo4_');
+VALUES (22222222222, 'Alexa', 'Brown', 'alexabrown', '(099)248-0593x3771', '9Dn81OSo4_', 'EMPLOYEE');
 INSERT INTO Users
-VALUES (33333333333, 'Jack', 'Black', 'jackblack', '(099)248-0593x3772', '9Dn81OSo5_');
+VALUES (33333333333, 'Jack', 'Black', 'jackblack', '(099)248-0593x3772', '9Dn81OSo5_', 'EMPLOYEE');
 INSERT INTO Users
-VALUES (44444444444, 'Adam', 'Lotus', 'adamlotus', '(099)248-0593x3773', '9Dn81OSo6_');
+VALUES (44444444444, 'Adam', 'Lotus', 'adamlotus', '(099)248-0593x3773', '9Dn81OSo6_', 'EMPLOYEE');
 INSERT INTO Users
-VALUES (55555555555, 'Alo', 'low', 'alolow', '(099)248-0593x3774', '9Dn81OSo7_');
+VALUES (55555555555, 'Alo', 'low', 'alolow', '(099)248-0593x3774', '9Dn81OSo7_', 'MANAGER');
 
 ----------------------------------------------------------------
 
@@ -239,20 +239,20 @@ VALUES (105, 'Brendan', 15, '9800', 852, 'H1A 1L7');
 ------------------------------------------------------------------------------------------------
 
 INSERT INTO Orders
-VALUES (75286929591, 25757763306, '04-06-2019');
+VALUES (75286929591, 25757763306, '04-06-2019', 'delivered');
 INSERT INTO Orders
-VALUES (72303304103, 25757763306, '10-12-2019');
+VALUES (72303304103, 25757763306, '10-12-2019', 'delivered');
 INSERT INTO Orders
-VALUES (73771990889, 42033432168, '06-10-2019');
+VALUES (73771990889, 42033432168, '06-10-2019', 'delivered');
 INSERT INTO Orders
-VALUES (79420102790, 36045244890, '09-03-2020');
+VALUES (79420102790, 36045244890, '09-03-2020', 'delivered');
 INSERT INTO Orders
-VALUES (32900409908, 57190774585, '02-01-2020');
--- INSERT INTO Orders VALUES (76335077271, 99127443217, '15-03-2020' );
--- INSERT INTO Orders VALUES (96539053815, 87301800085, '12-02-2020' );
--- INSERT INTO Orders VALUES (86191257638, 25757763306, '24-02-2020' );
--- INSERT INTO Orders VALUES (42017439603, 36045244890, '01-03-2020' );
--- INSERT INTO Orders VALUES (53536185057, 30876994580, '15-01-2020' );
+VALUES (32900409908, 57190774585, '02-01-2020', 'delivered');
+-- INSERT INTO Orders VALUES (76335077271, 99127443217, '15-03-2020', 'delivered');
+-- INSERT INTO Orders VALUES (96539053815, 87301800085, '12-02-2020', 'delivered');
+-- INSERT INTO Orders VALUES (86191257638, 25757763306, '24-02-2020', 'delivered');
+-- INSERT INTO Orders VALUES (42017439603, 36045244890, '01-03-2020', 'delivered');
+-- INSERT INTO Orders VALUES (53536185057, 30876994580, '15-01-2020', 'delivered');
 
 ------------------------------------------------------------------------------------------------
 

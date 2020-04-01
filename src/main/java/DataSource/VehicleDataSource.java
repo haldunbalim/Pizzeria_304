@@ -5,6 +5,7 @@ import database.DataBaseCredentials;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VehicleDataSource extends AbstractDataSource {
 
@@ -19,6 +20,19 @@ public class VehicleDataSource extends AbstractDataSource {
         return instance;
     }
 
+    private static HashMap<String, Boolean> availabilityHasMap = new HashMap<String, Boolean>() {
+        {
+            put("Y", true);
+            put("N", false);
+        }
+    };
+
+    private static HashMap<Boolean, String> availabilityHasMapReverse = new HashMap<Boolean, String>() {
+        {
+            put(true, "Y");
+            put(false, "N");
+        }
+    };
 
 
     // access current user via LoginManager
@@ -33,8 +47,10 @@ public class VehicleDataSource extends AbstractDataSource {
                 String licensePlate = rs.getString("license_plate");
                 String model = rs.getString("model");
                 String brand = rs.getString("brand");
+                String availability = rs.getString("available");
+
                 // TODO: Available Field added to vehicle
-                list.add(new Vehicle(licensePlate, model, brand, true));
+                list.add(new Vehicle(licensePlate, model, brand, true));//availabilityHasMap.get(availability)));
             }
             rs.close();
             stmt.close();
@@ -46,7 +62,19 @@ public class VehicleDataSource extends AbstractDataSource {
     }
 
     public void updateVehicleData(Vehicle v) {
-        //String license
+        String licensePlate = v.getLicensePlate().toUpperCase();
+        String brand = v.getBrand();
+        brand = brand.toUpperCase().charAt(0) + brand.toLowerCase().substring(1);
+        String model = v.getModel();
+        model = model.toUpperCase().charAt(0) + model.toLowerCase().substring(1);
+        boolean availability = v.isAvailable();
+        String avail = availabilityHasMapReverse.get(availability);
+
+        String brand2 = checkBrandName(brand, model);
+        String setValues = String.format("model='%s', available='%s' WHERE licence_plate='%s'", model, avail, licensePlate);
+
+        updateColumnValues(primaryTable, setValues);
+        v.setBrand(brand2);
     }
 
     public void removeVehicleData(Vehicle v) {
@@ -61,21 +89,9 @@ public class VehicleDataSource extends AbstractDataSource {
 
         brand = checkBrandName(brand, model);
         Vehicle v = null;
-
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO VEHICLE VALUES (?, ?)");
-            ps.setString(1, licensePlate);
-            ps.setString(2, model);
-
-            ps.executeUpdate();
-            connection.commit();
-            ps.close();
-            // TODO: Available Field added to vehicle
+        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, String.format("'%s', '%s', '%s'", licensePlate, model, "Y"));
+        if (res == DataBaseCredentials.OperationResult.inserted) {
             v = new Vehicle(licensePlate, model, brand, true);
-        } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.licenseExists);
-        } catch (SQLException e) {
-            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.insertionError);
         }
         return v;
     }
@@ -102,7 +118,6 @@ public class VehicleDataSource extends AbstractDataSource {
                 while (rs.next()) {
                     brand = rs.getString(1);
                 }
-                // TODO: after addition brand name is still incorrect although added correctly
                 rs.close();
                 stmt.close();
                 return brand;
@@ -117,4 +132,21 @@ public class VehicleDataSource extends AbstractDataSource {
         return brand;
     }
 
+    public void setVehicleAvailability(Vehicle v, boolean b) {
+        String licensePlate = v.getLicensePlate();
+
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE VEHICLE SET available = ?" +
+                    "WHERE LICENSE_PLATE = ?");
+
+            ps.setString(1, availabilityHasMapReverse.get(b));
+            ps.setString(2, licensePlate);
+
+            ps.close();
+            connection.commit();
+            v.setAvailable(b);
+        } catch (SQLException e) {
+            System.out.println(DataBaseCredentials.EXCEPTION_TAG + DataBaseCredentials.updateError);
+        }
+    }
 }

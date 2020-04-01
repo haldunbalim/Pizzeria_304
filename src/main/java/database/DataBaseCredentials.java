@@ -38,6 +38,7 @@ public class DataBaseCredentials {
         deletionFailed,
         updated,
         updateFailed,
+        noElementUpdated,
         notFound,
         tableEmpty
     };

@@ -11,13 +11,13 @@ CREATE TABLE CustomerType
  -- TODO: add user_type
 CREATE TABLE Users
 (
-    user_id  INTEGER PRIMARY KEY,
-    name     varchar(20) not null,
-    surname  varchar(20) not null,
-    username varchar(40) not null UNIQUE,
-    phoneNo  varchar(22),
-    password varchar(40) not null--,
-    -- user_type varchar(20)
+    user_id   INTEGER PRIMARY KEY,
+    name      varchar(20) not null,
+    surname   varchar(20) not null,
+    username  varchar(40) not null UNIQUE,
+    phoneNo   varchar(22),
+    password  varchar(40) not null,
+    user_type varchar(20)
 );
 
 -- if we want to add automatic incrementing to user_id
@@ -41,6 +41,7 @@ create table Vehicle
 (
     license_plate varchar(8) PRIMARY KEY,
     model         varchar(20) not null,
+    availability  char(1) default 'Y',
     FOREIGN KEY (model) references VehicleModelBrand
 );
 
@@ -92,9 +93,10 @@ CREATE TABLE Deliverable
 
 CREATE TABLE Orders
 (
-    order_id   INTEGER,
-    user_id    INTEGER,
-    order_date DATE,
+    order_id    INTEGER,
+    user_id     INTEGER,
+    order_date  DATE,
+    order_state varchar(20) default 'pending',
     PRIMARY KEY (order_id),
     FOREIGN KEY (user_id) references Users (user_id) on delete set null
 );

@@ -59,7 +59,7 @@ public class AuthenticationManager {
         try {
             Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
 
-            String statement = "SELECT user_id, password FROM USERS WHERE USERNAME='" + username + "'";
+            String statement = "SELECT USER_ID, PASSWORD FROM USERS WHERE USERNAME='" + username + "'";
             ResultSet rs = stmt.executeQuery(statement);
 
             String userPassword = "";
@@ -72,7 +72,6 @@ public class AuthenticationManager {
             stmt.close();
 
             if (password.equals(userPassword)) {
-                //currentUser = new User(username, password);
                 currentUser = UserDataSource.getInstance().getUser(userId);
                 return AuthStatus.AUTH_SUCCESSFUL;
             } else {

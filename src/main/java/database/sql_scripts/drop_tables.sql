@@ -36,3 +36,4 @@ drop table ADDRESS;
 drop table CITYPOSTALCODE;
 
 PURGE RECYCLEBIN;
+

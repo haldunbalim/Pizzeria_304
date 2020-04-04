@@ -6,10 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
         Coordinator.getInstance().start();
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 DatabaseConnectionHandler.getInstance().close();
-            }
         }, "Shutdown-thread"));
     }
 }

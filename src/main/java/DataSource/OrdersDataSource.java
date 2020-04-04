@@ -50,7 +50,7 @@ public class OrdersDataSource extends AbstractDataSource {
             while (rs.next()) {
                 long oid = rs.getLong("order_id");
                 Date date = rs.getDate("order_date");
-                String state = rs.getString("oder_state");
+                String state = rs.getString("order_state");
                 OrderState os = orderStateHashMap.get(state);
                 // TODO: get order deliverables
                 ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();

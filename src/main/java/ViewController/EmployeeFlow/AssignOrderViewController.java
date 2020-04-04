@@ -2,6 +2,7 @@ package ViewController.EmployeeFlow;
 
 import DataSource.OrdersDataSource;
 import Model.Order;
+import Model.OrderState;
 import Reusable.ButtonRenderer;
 import Reusable.WrapTextCellRenderer;
 import ViewController.AbstractTableViewController;
@@ -9,21 +10,18 @@ import ViewController.MyAbstractTableModel;
 import ViewModel.OrderEmployeeViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-public class AssignOrderViewController extends AbstractTableViewController implements TableModelListener {
+public class AssignOrderViewController extends AbstractTableViewController {
     private static AssignOrderViewController instance = new AssignOrderViewController();
     private JPanel mainPanel;
     private OrdersDataSource dataSource = OrdersDataSource.getInstance();
     private ArrayList<Order> orders;
-    private JTable table;
     private AssignOrderTableModel tableModel;
 
     private AssignOrderViewController() {
         configureUI();
-        table.getModel().addTableModelListener(this);
     }
 
     public static AssignOrderViewController getInstance() {
@@ -31,7 +29,8 @@ public class AssignOrderViewController extends AbstractTableViewController imple
     }
 
     public void configureUI() {
-        orders = dataSource.getOrdersOfBranch();
+        orders = new ArrayList<>(dataSource.getOrdersOfBranch().stream().filter(order -> order.getOrderState() != OrderState.PENDING)
+                .collect(Collectors.toList()));
         configureTable();
     }
 
@@ -44,14 +43,6 @@ public class AssignOrderViewController extends AbstractTableViewController imple
         for (int i = 0; i < orders.size(); i++) {
             table.setRowHeight(i, orders.get(i).getUniqueItemCount() * 17);
         }
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        Order removed = orders.remove(row);
-        EmployeeTabs.getInstance().setSelectedOrder(removed);
-        EmployeeTabs.getInstance().openAssignVehicle();
     }
 
     public JPanel getMainPanel() {
@@ -68,8 +59,17 @@ public class AssignOrderViewController extends AbstractTableViewController imple
             return col == getColumnCount() - 1;
         }
 
-        public void setValueAt(Object value, int row, int col) {
-            fireTableCellUpdated(row, col);
+        public Class getColumnClass(int col) {
+            return OrderEmployeeViewModel.getColumnClassAt(col);
         }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            Order removed = orders.remove(row);
+            EmployeeTabs.getInstance().setSelectedOrder(removed);
+            EmployeeTabs.getInstance().openAssignVehicle();
+            fireTableRowsUpdated(row, col);
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package DataSource;
 
 import Model.User;
+import Model.UserType;
 import database.DataBaseCredentials;
 
 import java.sql.ResultSet;
@@ -30,12 +31,15 @@ public class AuthenticationManager extends AbstractDataSource {
      * @return NEW_REGISTRATION if signup is successful
      */
     // call login after signUp is successfully complete
-    public AuthStatus signUp(String username, String password) {
+    public AuthStatus signUp(String username, String password, UserType userType) {
         long newId = getNextIdLong(primaryTable, "user_id");
         String statement = String.format("%d, '%s', '%s', '%s', null, '%s', '%s'",
                 newId, "name", "surname", username, password, "customer");
         DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, statement);
         if (res == DataBaseCredentials.OperationResult.inserted) {
+            if (userType == UserType.CUSTOMER) {
+                // Customer tablosuna ekleme yap
+            }
             return AuthStatus.NEW_REGISTRATION;
         } else if (res == DataBaseCredentials.OperationResult.integrityConstraintError) {
             return AuthStatus.AUTH_FAILED;

@@ -1,6 +1,7 @@
 package ViewController.ManagerFlow;
 
 import DataSource.EmployeesDataSource;
+import DataSource.UserDataSource;
 import Model.User;
 import Reusable.ButtonRenderer;
 import Reusable.PlaceholderFocusListener;
@@ -22,7 +23,7 @@ public class EditEmployeesViewController extends AbstractTableViewController {
     private JLabel errorLabel;
 
     private EditEmployeesViewController() {
-        employees = dataSource.getEmployees();
+        employees = dataSource.getEmployeesInCurrentBranch();
         configureUI();
     }
 
@@ -65,8 +66,12 @@ public class EditEmployeesViewController extends AbstractTableViewController {
                 if (username.equals("Username") || password.equals("Password")) {
                     return;
                 }
-                if (dataSource.createNewUser(username, password) == null) {
-                    showError("User with " + username + " already exists");
+                User newEmployee = dataSource.createNewUser(username, password);
+                if (newEmployee == null) {
+                    showError("Employee with " + username + " already exists");
+                } else {
+                    employees.add(newEmployee);
+                    ((EditEmployeesTableModel) tableModel).add(newEmployee);
                 }
             }
         });
@@ -112,10 +117,16 @@ public class EditEmployeesViewController extends AbstractTableViewController {
             if (col == getColumnCount() - 1) {
                 User removed = employees.remove(row);
                 tableModel.remove(row);
-                dataSource.removeUserData(removed);
+                UserDataSource.getInstance().removeUserData(removed);
                 fireTableCellUpdated(row, col);
             }
         }
+
+        public void add(User employee) {
+            this.data.add(new UserManagerViewModel(employee));
+            this.fireTableDataChanged();
+        }
+
     }
 
 }

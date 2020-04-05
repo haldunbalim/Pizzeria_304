@@ -21,7 +21,7 @@ public class OrderViewController extends AbstractViewController {
     private ArrayList<Deliverable> deliverables;
 
     protected OrderViewController() {
-        deliverables = dataSource.getDeliverables();
+        deliverables = dataSource.getDeliverablesOfCurrentBranch();
         configureUI();
         configureOrderButton();
     }
@@ -64,6 +64,11 @@ public class OrderViewController extends AbstractViewController {
             this.columnNames = DeliverableCustomerViewModel.columnNames;
         }
 
+        public Class getColumnClass(int col) {
+            return DeliverableCustomerViewModel.getColumnClassAt(col);
+        }
+
+
         public boolean isCellEditable(int row, int col) {
             return col >= getColumnCount() - 2;
         }
@@ -75,6 +80,20 @@ public class OrderViewController extends AbstractViewController {
                     list.add((Deliverable) dcvm.getModel());
             return list;
         }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            if (col == getColumnCount() - 1) {
+                ((DeliverableCustomerViewModel) data.get(row)).decrementAmount();
+            } else {
+                ((DeliverableCustomerViewModel) data.get(row)).incrementAmount();
+            }
+            fireTableCellUpdated(row, col);
+            fireTableDataChanged();
+        }
+
+
     }
+
 
 }

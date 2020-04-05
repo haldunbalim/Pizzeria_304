@@ -27,7 +27,7 @@ public class EmployeesDataSource extends AbstractDataSource {
     /**
      * @return list of employee User instances who work at the current user's branch
      */
-    public ArrayList<User> getEmployees() {
+    public ArrayList<User> getEmployeesInCurrentBranch() {
 
         ArrayList<User> list = new ArrayList<>();
         try {
@@ -43,7 +43,6 @@ public class EmployeesDataSource extends AbstractDataSource {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        Address address = new Address();
         return list;
     }
 
@@ -98,12 +97,12 @@ public class EmployeesDataSource extends AbstractDataSource {
         RestaurantBranch branch = null;
         try {
             Statement stmt = connection.createStatement();
-            String query = String.format("SELECT * FROM BRANCH natural join CityPostalCode WHERE bid=%d", bid);
+            String query = String.format("SELECT * FROM BRANCH natural join (select * from ADDRESS " +
+                    "natural join CityPostalCode) WHERE bid=%d", bid);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
                 String name = rs.getString("name");
-                int mid = rs.getInt("mid");
                 Address a = UserDataSource.getInstance().getAddressFromTable("Branch", "bid=" + bid);
                 branch = new RestaurantBranch(bid, name, a);
             }

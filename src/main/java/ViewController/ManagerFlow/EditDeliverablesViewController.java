@@ -21,7 +21,7 @@ public class EditDeliverablesViewController extends AbstractTableViewController 
     protected JPanel mainPanel;
 
     private EditDeliverablesViewController() {
-        deliverables = dataSource.getDeliverables();
+        deliverables = dataSource.getDeliverablesOfCurrentBranch();
         configureUI();
     }
 

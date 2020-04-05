@@ -51,10 +51,12 @@ public class OrdersDataSource extends AbstractDataSource {
             while (rs.next()) {
                 long oid = rs.getLong("order_id");
                 Date date = rs.getDate("order_date");
-                String state = rs.getString("oder_state");
+                String state = rs.getString("order_state");
                 OrderState os = orderStateHashMap.get(state);
                 // TODO: get order deliverables
-                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
+                //BAK
+                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
+                //ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
 
                 list.add(new Order(oid, currentUser, date.getTime(), deliverables, os));
             }
@@ -71,7 +73,7 @@ public class OrdersDataSource extends AbstractDataSource {
     public ArrayList<Order> getOrdersOfBranch() {
         ArrayList<Order> list = new ArrayList<>();
         User user = new User(123, "adf", "adfs", "adfa", "dfa", "adf", new Address("Istanbul", "adf", "af", 14), UserType.CUSTOMER, 15, new RestaurantBranch(132413, "fdafds", new Address("dsf", "adf", "adfa", 1234)));
-        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
+        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
         Date date = new Date();
         list.add(new Order(1324, user, date.getTime(), deliverables, OrderState.PENDING));
         return list;

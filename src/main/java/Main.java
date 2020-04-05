@@ -10,10 +10,8 @@ public class Main {
         // necessary for my Turkish comp
         Locale.setDefault(Locale.CANADA);
         Coordinator.getInstance().start();
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                DatabaseConnectionHandler.getInstance().close();
-            }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            DatabaseConnectionHandler.getInstance().close();
         }, "Shutdown-thread"));
     }
 }

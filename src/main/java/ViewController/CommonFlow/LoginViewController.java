@@ -59,16 +59,13 @@ public class LoginViewController extends AbstractViewController {
                         UserType userType = AuthenticationManager.getInstance().getCurrentUser().getUserType();
                         switch (userType) {
                             case CUSTOMER:
-                                Coordinator.getInstance().openScreen(ScreenEnum.ORDER);
+                                Coordinator.getInstance().openScreen(ScreenEnum.CUSTOMER_TABS);
                                 break;
                             case MANAGER:
                                 Coordinator.getInstance().openScreen(ScreenEnum.MANAGER_TABS);
                                 break;
                             case EMPLOYEE:
-                                if (AuthenticationManager.getInstance().getCurrentUser().getName().equals("NewUserName"))
-                                    Coordinator.getInstance().openScreen(ScreenEnum.SET_PROFILE_PAGE);
-                                else
-                                    Coordinator.getInstance().openScreen(ScreenEnum.EMPLOYEE_TABS);
+                                Coordinator.getInstance().openScreen(ScreenEnum.EMPLOYEE_TABS);
                                 break;
                         }
                         break;
@@ -88,12 +85,12 @@ public class LoginViewController extends AbstractViewController {
                 if (checkIfFieldsInvalid(username, password))
                     return;
 
-                AuthStatus authStatus = AuthenticationManager.getInstance().signUp(username, password);
+                AuthStatus authStatus = AuthenticationManager.getInstance().signUp(username, password, UserType.CUSTOMER);
                 switch (authStatus) {
                     case AUTH_FAILED:
                         showError("Auth failed there is a user with this username");
                         break;
-                    case AUTH_SUCCESSFUL:
+                    case NEW_REGISTRATION:
                         Coordinator.getInstance().openScreen(ScreenEnum.SET_PROFILE_PAGE);
                         break;
                     case CONNECTION_ERROR:

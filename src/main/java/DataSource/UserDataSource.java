@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Locale;
 
 public class UserDataSource extends AbstractDataSource {
     private static UserDataSource instance = new UserDataSource();
@@ -52,19 +51,27 @@ public class UserDataSource extends AbstractDataSource {
                 String phoneNumber = rs.getString("phoneno");
                 String userType = rs.getString("user_type");
                 UserType type = userTypeHashMap.get(userType);
-                Address a = getUserAddress(uid);
+                Address address = null;
+                ;
                 long bid;
                 RestaurantBranch affiliatedBranch = null;
                 if (type == UserType.EMPLOYEE || type == UserType.MANAGER) {
                     bid = EmployeesDataSource.getInstance().getBranchIdOfEmployee(uid);
                     affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
                 } else {
-                    bid = 105;
+                    bid = 455758951;
                     affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
+                    address = getUserAddress(uid);
                 }
-                // TODO: add membership points to db, discuss necessity of affiliated branch
-                u = new User(uid, username, password, name, surname, phoneNumber, a, type,
-                        0, affiliatedBranch);
+                //bak
+                // long bid = getAffiliatedBranchId(uid);
+                //RestaurantBranch affiliatedBranch = getBranch(bid);
+                int membershipPoints = 0;
+                if (type == UserType.CUSTOMER)
+                    // work around get this from customer table
+                    // membershipPoints = rs.getInt("membershipPoints");
+                    u = new User(uid, username, password, name, surname, phoneNumber, address, type,
+                            membershipPoints, affiliatedBranch);
             }
             rs.close();
             stmt.close();
@@ -89,17 +96,15 @@ public class UserDataSource extends AbstractDataSource {
                         "password = '%s'," +
                         "name ='%s'," +
                         "surname ='%s'," +
-                        "phoneNumber = '%s'",
+                        "phoneNO = '%s'" +
+                        "membershipPoins = %d",
                 username,
                 password,
                 name,
                 surname,
-                phoneNumber));
+                phoneNumber,
+                membershipPoint));
 
-
-        if (user.getUserType() == UserType.CUSTOMER) {
-            statement.append(String.format(Locale.CANADA, ", membership_point=%d", membershipPoint));
-        }
         statement.append(String.format(" WHERE user_id=%d", id));
         updateColumnValues(primaryTable, statement.toString());
     }
@@ -133,6 +138,48 @@ public class UserDataSource extends AbstractDataSource {
     }
 
     public Address getUserAddress(long uid) {
-        return getAddressFromTable(primaryTable, "user_id=" + uid);
+        return getAddressFromTable("Customer", "user_id=" + uid);
+    }
+
+
+    private long getAffiliatedBranchId(long userId) {
+        long bid = -1;
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT bid FROM USERS natural join " +
+                            "EMPLOYEEWORKSATBRANCH WHERE user_id=%d",
+                    userId);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                bid = rs.getInt("bid");
+                break;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return bid;
+    }
+
+
+    private RestaurantBranch getBranch(long bid) {
+        RestaurantBranch branch = null;
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT * FROM BRANCH natural join CityPostalCode WHERE bid=%d", bid);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Address a = UserDataSource.getInstance().getAddressFromTable("Branch", String.format("bid=%d", bid));
+                branch = new RestaurantBranch(bid, name, a);
+            }
+
+            stmt.close();
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return branch;
     }
 }

@@ -22,7 +22,7 @@ public class EditVehiclesViewController extends AbstractTableViewController {
     private VehicleDataSource dataSource = VehicleDataSource.getInstance();
 
     private EditVehiclesViewController() {
-        vehicles = dataSource.getVehicles();
+        vehicles = dataSource.getVehiclesOfCurrentBranch();
         configureUI();
     }
 

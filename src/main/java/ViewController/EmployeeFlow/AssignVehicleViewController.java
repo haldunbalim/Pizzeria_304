@@ -5,22 +5,19 @@ import DataSource.VehicleDataSource;
 import Model.OrderState;
 import Model.Vehicle;
 import Reusable.ButtonRenderer;
-import ViewController.AbstractViewController;
+import ViewController.AbstractTableViewController;
 import ViewController.MyAbstractTableModel;
 import ViewModel.VehicleViewModel;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class AssignVehicleViewController extends AbstractViewController implements TableModelListener {
+public class AssignVehicleViewController extends AbstractTableViewController {
     private static AssignVehicleViewController instance = new AssignVehicleViewController();
     private JPanel mainPanel;
-    private JTable table;
     private AssignVehiclesTableModel tableModel;
     private VehicleDataSource dataSource = VehicleDataSource.getInstance();
     private ArrayList<Vehicle> vehicles;
@@ -28,7 +25,6 @@ public class AssignVehicleViewController extends AbstractViewController implemen
     private AssignVehicleViewController() {
         configureUI();
         configureCancelButton();
-        table.getModel().addTableModelListener(this);
     }
 
     public static AssignVehicleViewController getInstance() {
@@ -36,7 +32,7 @@ public class AssignVehicleViewController extends AbstractViewController implemen
     }
 
     public void configureUI() {
-        vehicles = dataSource.getVehicles();
+        vehicles = dataSource.getVehiclesOfCurrentBranch();
         configureTable();
     }
 
@@ -57,19 +53,8 @@ public class AssignVehicleViewController extends AbstractViewController implemen
         table = new JTable(tableModel);
         table.getColumn("").setCellRenderer(new ButtonRenderer("Assign"));
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        addTable();
         table.setRowHeight(50);
-    }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        int row = e.getFirstRow();
-        Vehicle vehicle = vehicles.remove(row);
-        EmployeeTabs.getInstance().setSelectedVehicle(vehicle);
-        OrdersDataSource.getInstance().changeOrderState(EmployeeTabs.getInstance().getSelectedOrder(), vehicle, OrderState.IN_DELIVERY);
-        EmployeeTabs.getInstance().openFinishDelivery();
     }
 
     public JPanel getMainPanel() {
@@ -86,9 +71,17 @@ public class AssignVehicleViewController extends AbstractViewController implemen
             return true;
         }
 
+        @Override
         public void setValueAt(Object value, int row, int col) {
-            // this works here?
-            AssignVehicleViewController.getInstance().tableChanged(new TableModelEvent(this, row, col));
+            Vehicle vehicle = vehicles.remove(row);
+            EmployeeTabs.getInstance().setSelectedVehicle(vehicle);
+            OrdersDataSource.getInstance().changeOrderState(EmployeeTabs.getInstance().getSelectedOrder(), vehicle, OrderState.IN_DELIVERY);
+            EmployeeTabs.getInstance().openFinishDelivery();
+            fireTableRowsUpdated(row, col);
+        }
+
+        public Class getColumnClass(int col) {
+            return VehicleViewModel.getColumnClassAt(col);
         }
 
     }

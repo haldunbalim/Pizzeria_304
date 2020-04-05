@@ -2,7 +2,6 @@ grant select, insert, update, delete, read on ADDRESS to ora_hbalim;
 grant select, insert, update, delete, read on BRANCH to ora_hbalim;
 grant select, insert, update, delete, read on CITYPOSTALCODE to ora_hbalim;
 grant select, insert, update, delete, read on CUSTOMER to ora_hbalim;
-grant select, insert, update, delete, read on CUSTOMERTYPE to ora_hbalim;
 grant select, insert, update, delete, read on DELIVERABLE to ora_hbalim;
 grant select, insert, update, delete, read on DRIVERCARRIESORDER to ora_hbalim;
 grant select, insert, update, delete, read on DRIVERDRIVESVEHICLE to ora_hbalim;

@@ -28,11 +28,12 @@ public class DeliverableDataSource extends AbstractDataSource {
      *
      * @return
      */
-    public ArrayList<Deliverable> getDeliverables() {
+    public ArrayList<Deliverable> getDeliverablesOfCurrentBranch() {
         ArrayList<Deliverable> list = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
-            String query = "SELECT * FROM DELIVERABLE";
+            long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
+            String query = String.format("SELECT * FROM DELIVERABLE WHERE BID=%d", bid);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
@@ -129,13 +130,15 @@ public class DeliverableDataSource extends AbstractDataSource {
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
         int newDid = getNextIdInt(primaryTable, "did");
+        long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
 
         DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable,
-                String.format(Locale.CANADA, "%d, '%s', %.2f", newDid, name, price)
+                String.format(Locale.CANADA, "%d, '%s', %.2f, %d", newDid, name, price, bid)
         );
         // TODO: new item is added to the db but doesn't appear automatically
         if (res == DataBaseCredentials.OperationResult.inserted) {
             double priceWithTwoDecimals = Double.parseDouble(String.format("%.2f", price));
+            // BURAYA bid eklenecek miye bak
             d = new Deliverable(newDid, name, priceWithTwoDecimals);
         }
         return d;

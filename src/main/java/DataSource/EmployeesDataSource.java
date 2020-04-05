@@ -92,7 +92,6 @@ public class EmployeesDataSource extends AbstractDataSource {
      * @param bid
      * @return RestaurantBranch instance
      */
-    // TODO: Add mid to branch model
     public RestaurantBranch getBranch(long bid) {
         RestaurantBranch branch = null;
         try {

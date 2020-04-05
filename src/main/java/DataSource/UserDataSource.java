@@ -9,6 +9,8 @@ import database.DataBaseCredentials;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class UserDataSource extends AbstractDataSource {
@@ -60,18 +62,13 @@ public class UserDataSource extends AbstractDataSource {
                     bid = EmployeesDataSource.getInstance().getBranchIdOfEmployee(uid);
                     affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
                 } else {
-                    // TODO: get branch by city
-                    bid = 455758951;
-                    affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
                     address = getUserAddress(uid);
+                    bid = getAffiliatedBranchId(address.getCity());
+                    affiliatedBranch = EmployeesDataSource.getInstance().getBranch(bid);
                 }
-                //bak
-                // long bid = getAffiliatedBranchId(uid);
-                //RestaurantBranch affiliatedBranch = getBranch(bid);
                 int membershipPoints = 0;
                 if (type == UserType.CUSTOMER)
-                    // work around get this from customer table
-                    // membershipPoints = rs.getInt("membershipPoints");
+                    membershipPoints = getCustomerPoints(uid);
                     u = new User(uid, username, password, name, surname, phoneNumber, address, type,
                             membershipPoints, affiliatedBranch);
             }
@@ -176,44 +173,54 @@ public class UserDataSource extends AbstractDataSource {
     }
 
 
-    private long getAffiliatedBranchId(long userId) {
-        long bid = -1;
-        try {
-            Statement stmt = connection.createStatement();
-            String query = String.format("SELECT bid FROM USERS natural join " +
-                            "EMPLOYEEWORKSATBRANCH WHERE user_id=%d",
-                    userId);
-            ResultSet rs = stmt.executeQuery(query);
-
-            while (rs.next()) {
-                bid = rs.getInt("bid");
-                break;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+    private long getAffiliatedBranchId(String city) {
+        ArrayList<Long> availableBranches = getBranchIdsInCity(city);
+        // select a branch randomly
+        Collections.shuffle(availableBranches);
+        Long bid = availableBranches.get(0);
         return bid;
     }
 
 
-    private RestaurantBranch getBranch(long bid) {
-        RestaurantBranch branch = null;
+    /**
+     * @param city
+     * @return branch ids in the given city
+     */
+    protected ArrayList<Long> getBranchIdsInCity(String city) {
+        ArrayList<Long> branchIds = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
-            String query = String.format("SELECT * FROM BRANCH natural join CityPostalCode WHERE bid=%d", bid);
+            String query = String.format("select bid, c from BRANCH natural join (select CITY c " +
+                    "from ADDRESS natural join CITYPOSTALCODE) where c='%s' group by bid, c", city);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                String name = rs.getString("name");
-                Address a = UserDataSource.getInstance().getAddressFromTable("Branch", String.format("bid=%d", bid));
-                branch = new RestaurantBranch(bid, name, a);
+                long bid = rs.getLong("bid");
+                branchIds.add(bid);
             }
-
-            stmt.close();
-            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return branch;
+        return branchIds;
+    }
+
+    /**
+     * @param uid
+     * @return points of a customer
+     */
+    protected int getCustomerPoints(long uid) {
+        int points = 0;
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT points from Customer where user_id=%d", uid);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                points = rs.getInt("points");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return points;
     }
 }

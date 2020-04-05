@@ -4,6 +4,7 @@ import Model.Address;
 import Model.RestaurantBranch;
 import Model.User;
 import Model.UserType;
+import database.DataBaseCredentials;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -89,24 +90,56 @@ public class UserDataSource extends AbstractDataSource {
         String name = user.getName();
         String surname = user.getSurname();
         String phoneNumber = user.getPhoneNumber();
-        int membershipPoint = user.getMembershipPoints();
 
-        StringBuffer statement = new StringBuffer(String.format(
+
+        String statementForUser = String.format(
                 "username = '%s'," +
                         "password = '%s'," +
                         "name ='%s'," +
                         "surname ='%s'," +
-                        "phoneNO = '%s'" +
-                        "membershipPoins = %d",
+                        "phoneNO = '%s', " +
+                        "WHERE user_id= %d",
                 username,
                 password,
                 name,
                 surname,
                 phoneNumber,
-                membershipPoint));
+                id
+        );
+        DataBaseCredentials.OperationResult res1 = updateColumnValues(primaryTable, statementForUser);
 
-        statement.append(String.format(" WHERE user_id=%d", id));
-        updateColumnValues(primaryTable, statement.toString());
+        // DataBaseCredentials.OperationResult resAddress = DataBaseCredentials.OperationResult.updated;
+        if (user.getUserType() == UserType.CUSTOMER) {
+            Address a = user.getAddress();
+            String statementForCity = String.format(
+                    "City='%s'," +
+                            "POSTALCODE='%s'",
+                    a.getCity(),
+                    a.getPostalCode()
+            );
+
+            DataBaseCredentials.OperationResult resCity = updateColumnValues("CityPostalCode", statementForCity);
+            // if the new postal code is not in db insert it
+            if (resCity == DataBaseCredentials.OperationResult.noElementUpdated) {
+                resCity = insertIntoDb("CityPostalCode", String.format("'%s', '%s'", a.getCity(), a.getPostalCode()));
+            }
+            if (resCity == DataBaseCredentials.OperationResult.updated || resCity == DataBaseCredentials.OperationResult.inserted) {
+                String statementForAddress = String.format(
+                        "ADDRESS_ID=%d," +
+                                "STREETNAME='%s'," +
+                                "HOUSENR=%d," +
+                                "POSTALCODE=%d",
+                        // TODO: get this when Address model is updated
+                        1,//a.getId(),
+                        a.getStreetName(),
+                        a.getHouseNumber(),
+                        a.getPostalCode()
+                );
+
+                DataBaseCredentials.OperationResult resAddress =
+                        updateColumnValues("Address", statementForAddress);
+            }
+        }
     }
 
     public void removeUserData(User user) {

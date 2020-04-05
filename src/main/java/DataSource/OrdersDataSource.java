@@ -53,7 +53,7 @@ public class OrdersDataSource extends AbstractDataSource {
                 String state = rs.getString("order_state");
                 OrderState os = orderStateHashMap.get(state);
                 // TODO: get order deliverables
-                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
+                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
 
                 // TODO: change date to DAte format in Model.Order
                 list.add(new Order(oid, currentUser, date.getTime(), deliverables, os));
@@ -64,14 +64,6 @@ public class OrdersDataSource extends AbstractDataSource {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        User user = new User(123, "adf", "adfs", "adfa", "dfa",
-                "adf", new Address("Istanbul", "adf", "af", 14),
-                UserType.CUSTOMER, 15,
-                new RestaurantBranch(132413, "fdafds",
-                        new Address("dsf", "adf", "adfa", 1234)));
-        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
-        Date date = new Date();
-        //      list.add(new Order(1324, user, date.getTime(), deliverables, OrderState.PENDING));
         return list;
     }
 
@@ -79,7 +71,7 @@ public class OrdersDataSource extends AbstractDataSource {
     public ArrayList<Order> getOrdersOfBranch() {
         ArrayList<Order> list = new ArrayList<>();
         User user = new User(123, "adf", "adfs", "adfa", "dfa", "adf", new Address("Istanbul", "adf", "af", 14), UserType.CUSTOMER, 15, new RestaurantBranch(132413, "fdafds", new Address("dsf", "adf", "adfa", 1234)));
-        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverables();
+        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
         Date date = new Date();
         list.add(new Order(1324, user, date.getTime(), deliverables, OrderState.PENDING));
         return list;
@@ -95,7 +87,6 @@ public class OrdersDataSource extends AbstractDataSource {
     // Set vehicle available as well if newState == DELIVERED
     public void changeOrderState(Order selectedOrder, Vehicle vehicle, OrderState newState) {
         long oid = selectedOrder.getOid();
-        String licensePlate = vehicle.getLicensePlate();
         boolean vehicleAvail = newState == OrderState.DELIVERED || newState == OrderState.PENDING;
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE Orders SET ORDER_STATE = ? " +

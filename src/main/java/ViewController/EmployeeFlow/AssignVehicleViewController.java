@@ -32,7 +32,7 @@ public class AssignVehicleViewController extends AbstractTableViewController {
     }
 
     public void configureUI() {
-        vehicles = dataSource.getVehicles();
+        vehicles = dataSource.getVehiclesOfCurrentBranch();
         configureTable();
     }
 

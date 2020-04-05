@@ -1,13 +1,4 @@
 -- create statements
-
-CREATE TABLE CustomerType
-(
-    type           varchar(15) PRIMARY KEY,
-    discountRate   number(*,2),
-    freeDeliveries Integer,
-    membershipFee  Integer,
-    renewalDate    date
-);
  -- TODO: add user_type
 CREATE TABLE Users
 (
@@ -31,6 +22,33 @@ CREATE TABLE Users
 --         FROM dual;
 --     end;
 
+
+create table CityPostalCode
+(
+    City       Varchar(20) not null,
+    PostalCode VARCHAR(15) PRIMARY KEY
+);
+
+CREATE TABLE Address
+(
+    ADDRESS_ID INTEGER,
+    StreetName VarChar(40),
+    HouseNr    INTEGER,
+    PostalCode VarChar(10),
+    PRIMARY KEY (ADDRESS_ID),
+    FOREIGN KEY (PostalCode) references CityPostalCode (PostalCode)
+);
+
+CREATE TABLE Branch
+(
+    bid        INTEGER,
+    Name       varchar(20),
+    ADDRESS_ID INTEGER,
+    PRIMARY KEY (bid),
+    FOREIGN KEY (ADDRESS_ID) references Address (ADDRESS_ID)
+        on delete cascade
+);
+
 create table VehicleModelBrand
 (
     model varchar(20) PRIMARY KEY,
@@ -42,53 +60,22 @@ create table Vehicle
     license_plate varchar(8) PRIMARY KEY,
     model         varchar(20) not null,
     availability  char(1) default 'Y',
-    FOREIGN KEY (model) references VehicleModelBrand
-);
-
-create table CityPostalCode
-(
-    City       Varchar(20) not null,
-    PostalCode VARCHAR(15) PRIMARY KEY
-);
-
-CREATE TABLE Address
-(
-    StreetName VarChar(25),
-    HouseNr    INTEGER,
-    PostalCode VarChar(10),
-    PRIMARY KEY (StreetName, HouseNr, PostalCode),
-    FOREIGN KEY (PostalCode) references CityPostalCode (PostalCode)
-);
-
-CREATE TABLE Menu
-(
-    mid   INTEGER,
-    Name  varchar(20),
-    Price number(*, 2),
-    PRIMARY KEY (mid)
-);
-
-CREATE TABLE Branch
-(
-    bid        INTEGER,
-    Name       varchar(20),
-    mid        INTEGER,
-    StreetName VarChar(25),
-    HouseNr    INTEGER,
-    PostalCode VarChar(10),
-    PRIMARY KEY (bid),
-    FOREIGN KEY (mid) references Menu (mid)
-        On DELETE SET NULL,
-    FOREIGN KEY (streetname, housenr, postalcode) references Address (streetname, housenr, postalcode)
+    bid           INTEGER,
+    FOREIGN KEY (model) references VehicleModelBrand,
+    FOREIGN KEY (bid) references Branch (bid)
         on delete cascade
 );
+
 
 CREATE TABLE Deliverable
 (
     did   INTEGER,
     Name  varchar(20),
     Price number(*, 2),
-    PRIMARY KEY (did)
+    bid   INTEGER,
+    PRIMARY KEY (did),
+    FOREIGN KEY (bid) references Branch (bid)
+        on delete cascade
 );
 
 CREATE TABLE Orders
@@ -123,29 +110,22 @@ create TABLE Pizza
 create table Customer
 (
     user_id    INTEGER,
-    type       varchar(15),
-    StreetName VarChar(25),
-    HouseNr    INTEGER,
-    PostalCode VarChar(10),
+    points     INTEGER,
+    ADDRESS_ID INTEGER,
     PRIMARY key (user_id),
     FOREIGN key (user_id) references Users (user_id) on delete cascade,
-    FOREIGN KEY (type) references CustomerType (type),
-    FOREIGN KEY (streetname, housenr, postalcode) references Address (streetname, housenr, postalcode)
+    FOREIGN KEY (ADDRESS_ID) references Address (ADDRESS_ID)
         on delete cascade
 );
 
 CREATE TABLE Route
 (
-    StreetNameFrom VarChar(25),
-    HouseNrFrom    INTEGER,
-    PostalCodeFrom VarChar(10),
-    StreetNameTo   VarChar(25),
-    HouseNrTo      INTEGER,
-    PostalCodeTo   VarChar(10),
-    PRIMARY key (StreetNameFrom, HouseNrFrom, PostalCodeFrom, StreetNameTo, HouseNrTo, PostalCodeTo),
-    FOREIGN KEY (streetnameFrom, housenrFrom, postalcodeFrom) references Address (streetname, housenr, postalcode)
+    fromId INTEGER,
+    toId   INTEGER,
+    PRIMARY key (fromId, toId),
+    FOREIGN KEY (fromId) references Address (ADDRESS_ID)
         on delete CASCADE,
-    FOREIGN KEY (streetnameTo, housenrTo, postalcodeTo) references Address (streetname, housenr, postalcode)
+    FOREIGN KEY (toId) references Address (ADDRESS_ID)
         on delete cascade
 );
 
@@ -172,8 +152,8 @@ create table DriverCarriesOrder
 
 CREATE table EmployeeWorksAtBranch
 (
-    bid     INTEGER,
     user_id INTEGER,
+    bid     INTEGER,
     PRIMARY KEY (bid, user_id),
     FOREIGN KEY (bid) references Branch (bid) on delete SET NULL,
     FOREIGN KEY (user_id) references Users (user_id) on DELETE CASCADE

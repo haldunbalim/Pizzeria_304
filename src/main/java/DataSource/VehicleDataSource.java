@@ -1,6 +1,7 @@
 package DataSource;
 
 import Model.Vehicle;
+import Service.AuthenticationManager;
 import database.DataBaseCredentials;
 
 import java.sql.*;
@@ -36,11 +37,12 @@ public class VehicleDataSource extends AbstractDataSource {
 
 
     // access current user via LoginManager
-    public ArrayList<Vehicle> getVehicles() {
+    public ArrayList<Vehicle> getVehiclesOfCurrentBranch() {
         ArrayList<Vehicle> list = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
-            String query = "SELECT * FROM VEHICLE natural join VEHICLEMODELBRAND";
+            long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
+            String query = String.format("SELECT * FROM VEHICLE natural join VEHICLEMODELBRAND WHERE BID=%d", bid);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {

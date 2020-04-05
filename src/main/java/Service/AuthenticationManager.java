@@ -2,6 +2,7 @@ package Service;
 
 import DataSource.UserDataSource;
 import Model.User;
+import Model.UserType;
 import database.DatabaseConnectionHandler;
 
 import java.sql.Connection;
@@ -30,8 +31,7 @@ public class AuthenticationManager {
     // TODO: change user_id's to be sequentially starting from
     // returns info about Authentication Status
     // call login after signUp is successfully complete
-    public AuthStatus signUp(String username, String password) {
-        long newId = 0;
+    public AuthStatus signUp(String username, String password, UserType userType) {
         try {
             Connection c = DatabaseConnectionHandler.getConnection();
             Statement stmt = c.createStatement();
@@ -40,8 +40,16 @@ public class AuthenticationManager {
             String statement = String.format("INSERT INTO Users Values (%d, '%s', '%s', '%s', null, '%s', null)",
                     newID, "name", "surname", username, password);
             stmt.execute(statement);
+            if (userType == UserType.CUSTOMER) {
+                // Customer tablosuna ekleme yap
+            } else {
+                // Employee works at branch tablosuna ekleme yap
+            }
             c.commit();
             stmt.close();
+
+            currentUser = new User(newID, username, password, Constants.NEW_USER_NAME, Constants.NEW_USER_SURNAME, null, null, userType, 0, null);
+
 
             return AuthStatus.NEW_REGISTRATION;
         } catch (SQLException e) {
@@ -94,7 +102,7 @@ public class AuthenticationManager {
     // auxilary functions
     // finds the largest user id and returns the next value
     // TODO: replace with authomatic incrementing
-    public long assignUserIdD() {
+    private long assignUserIdD() {
         try {
             Statement stmt = DatabaseConnectionHandler.getConnection().createStatement();
 

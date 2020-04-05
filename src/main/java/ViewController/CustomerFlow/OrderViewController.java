@@ -21,7 +21,7 @@ public class OrderViewController extends AbstractViewController {
     private ArrayList<Deliverable> deliverables;
 
     protected OrderViewController() {
-        deliverables = dataSource.getDeliverables();
+        deliverables = dataSource.getDeliverablesOfCurrentBranch();
         configureUI();
         configureOrderButton();
     }

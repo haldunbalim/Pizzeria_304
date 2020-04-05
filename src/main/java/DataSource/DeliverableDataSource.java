@@ -1,6 +1,7 @@
 package DataSource;
 
 import Model.Deliverable;
+import Service.AuthenticationManager;
 import database.DataBaseCredentials;
 
 import java.sql.ResultSet;
@@ -23,11 +24,12 @@ public class DeliverableDataSource extends AbstractDataSource {
 
     // returns an arrayList of Deliverables for currentUser's affiliated restaurant
     // access current user via LoginManager
-    public ArrayList<Deliverable> getDeliverables() {
+    public ArrayList<Deliverable> getDeliverablesOfCurrentBranch() {
         ArrayList<Deliverable> list = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
-            String query = "SELECT * FROM DELIVERABLE";
+            long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
+            String query = String.format("SELECT * FROM DELIVERABLE WHERE BID=%d", bid);
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
@@ -67,9 +69,10 @@ public class DeliverableDataSource extends AbstractDataSource {
     public Deliverable createNewDeliverable(String name, Double price) {
         Deliverable d = null;
         int newDid = getNextId(primaryTable, "did");
+        long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
 
         DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable,
-                String.format(Locale.CANADA, "%d, '%s', %.2f", newDid, name, price)
+                String.format(Locale.CANADA, "%d, '%s', %.2f, %d", newDid, name, price, bid)
         );
         if (res == DataBaseCredentials.OperationResult.inserted) {
             double priceWithTwoDecimals = Double.parseDouble(String.format("%.2f", price));

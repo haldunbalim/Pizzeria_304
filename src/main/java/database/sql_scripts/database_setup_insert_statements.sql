@@ -39,7 +39,7 @@ VALUES (311330272, 'Nathan', 'Smith', 'nathansmith', '001-214-021-8315x337', 'O(
 INSERT INTO Users
 VALUES (571857985, 'Ashley', 'Taylor', 'ashleytaylor', '778.890.8882', 'J8CCV2fs(f', 'customer');
 INSERT INTO Users
-VALUES (714452951, 'Phillip', 'Thomas', 'phillipthomas', '0343677471', '^_m&TJ2t5G', 'employee');
+VALUES (714452951, 'Phillip', 'Thomas', 'phillipthomas', '0343677471', '^_m&TJ2t5G', 'manager');
 INSERT INTO Users
 VALUES (739815935, 'Nancy', 'Walker', 'nancywalker', '001-611-828-0367x68166', 'c&Q0lPacHh', 'employee');
 INSERT INTO Users
@@ -49,7 +49,7 @@ VALUES (426098635, 'Angie', 'Powers', 'angiepowers', '001-472-452-5318x84664', '
 INSERT INTO Users
 VALUES (249872890, 'Samuel', 'Riley', 'samuelriley', '+1-486-603-0699x28631', '$JCRpoCRf1', 'employee');
 INSERT INTO Users
-VALUES (744187128, 'Nathan', 'Graves', 'nathangraves', '499-537-3540x0495', '*BJE+ZgU&2', 'employee');
+VALUES (744187128, 'Nathan', 'Graves', 'nathangraves', '499-537-3540x0495', '*BJE+ZgU&2', 'manager');
 INSERT INTO Users
 VALUES (867065896, 'Ryan', 'Yates', 'ryanyates', '738.838.2132x8862', '&r18fPBZp$', 'employee');
 INSERT INTO Users
@@ -59,7 +59,7 @@ VALUES (151627477, 'Misty', 'Jones', 'mistyjones', '(283)342-8413', 'oV25JGFwf%'
 INSERT INTO Users
 VALUES (183534839, 'Jacob', 'Gonzales', 'jacobgonzales', '+1-463-604-2648x9356', '*85+Osx4rU', 'employee');
 INSERT INTO Users
-VALUES (673714674, 'Mark', 'Hill', 'markhill', '045.954.9354', '6rPEo0Ub!R', 'employee');
+VALUES (673714674, 'Mark', 'Hill', 'markhill', '045.954.9354', '6rPEo0Ub!R', 'manager');
 INSERT INTO Users
 VALUES (468410727, 'Collin', 'Estrada', 'collinestrada', '(709)187-7379x334', '@#fHQ$dqd6', 'employee');
 INSERT INTO Users
@@ -110,9 +110,9 @@ VALUES ('Montreal', 'G0J 0K2');
 INSERT INTO CityPostalCode
 VALUES ('Vancouver', 'E7R 3O4');
 INSERT INTO CityPostalCode
-VALUES ('Vancouver', 'V6B 9K7');
+VALUES ('Montreal', 'V6B 9K7');
 INSERT INTO CityPostalCode
-VALUES ('Vancouver', 'E8L 1X1');
+VALUES ('Toronto', 'E8L 1X1');
 ------------------------------------------------------------------------------------------------
 INSERT INTO Address
 VALUES (659339296, 'Cynthia Harbor Apt. 331', 9271, 'R2F 5D2');

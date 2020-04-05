@@ -29,7 +29,7 @@ public class AssignOrderViewController extends AbstractTableViewController {
     }
 
     public void configureUI() {
-        orders = new ArrayList<>(dataSource.getOrdersOfBranch().stream().filter(order -> order.getOrderState() != OrderState.PENDING)
+        orders = new ArrayList<>(dataSource.getOrdersOfBranch().stream().filter(order -> order.getOrderState() == OrderState.PENDING)
                 .collect(Collectors.toList()));
         configureTable();
     }

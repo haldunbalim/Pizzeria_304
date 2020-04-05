@@ -40,7 +40,7 @@ public class DeliverableDataSource extends AbstractDataSource {
                 int did = rs.getInt("did");
                 String name = rs.getString("name");
                 double price = rs.getDouble("price");
-                list.add(new Deliverable(did, name, price));
+                list.add(new Deliverable(did, name, price, bid));
             }
             rs.close();
             stmt.close();
@@ -64,7 +64,8 @@ public class DeliverableDataSource extends AbstractDataSource {
             while (rs.next()) {
                 String name = rs.getString("name");
                 double price = rs.getDouble("price");
-                d = new Deliverable(did, name, price);
+                long bid = rs.getLong("bid");
+                d = new Deliverable(did, name, price, bid);
             }
             rs.close();
             stmt.close();
@@ -82,12 +83,15 @@ public class DeliverableDataSource extends AbstractDataSource {
         ArrayList<Deliverable> list = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
-            String query = "SELECT * FROM ORDERS natural join ORDERCONTAINSDELIVERABLES";
+            String query = "SELECT * FROM ORDERS natural join ORDERCONTAINSDELIVERABLES WHERE order_id=" + oid;
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
                 int did = rs.getInt("did");
-                list.add(getDeliverable(did));
+                int amount = rs.getInt("amount");
+                for (int i = 0; i < amount; i++) {
+                    list.add(getDeliverable(did));
+                }
             }
             rs.close();
             stmt.close();
@@ -138,8 +142,7 @@ public class DeliverableDataSource extends AbstractDataSource {
         // TODO: new item is added to the db but doesn't appear automatically
         if (res == DataBaseCredentials.OperationResult.inserted) {
             double priceWithTwoDecimals = Double.parseDouble(String.format("%.2f", price));
-            // BURAYA bid eklenecek miye bak
-            d = new Deliverable(newDid, name, priceWithTwoDecimals);
+            d = new Deliverable(newDid, name, priceWithTwoDecimals, bid);
         }
         return d;
     }

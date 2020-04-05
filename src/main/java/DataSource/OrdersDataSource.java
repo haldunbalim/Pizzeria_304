@@ -3,13 +3,12 @@ package DataSource;
 import Model.*;
 import database.DataBaseCredentials;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+
+import static java.time.LocalDate.now;
 
 public class OrdersDataSource extends AbstractDataSource {
     private static OrdersDataSource ourInstance = new OrdersDataSource();
@@ -53,11 +52,7 @@ public class OrdersDataSource extends AbstractDataSource {
                 Date date = rs.getDate("order_date");
                 String state = rs.getString("order_state");
                 OrderState os = orderStateHashMap.get(state);
-                // TODO: get order deliverables
-                //BAK
-                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
-                //ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
-
+                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
                 list.add(new Order(oid, currentUser, date.getTime(), deliverables, os));
             }
             rs.close();
@@ -68,22 +63,90 @@ public class OrdersDataSource extends AbstractDataSource {
         return list;
     }
 
-    // TODO: implement
-    //  TODO: Use Authmanager.currentUsers affiliated branch info
+    /**
+     * auxilary function for getOrdersOfBranch
+     *
+     * @param oid order_id
+     * @return the user of the order
+     */
+    protected User getUserFromOrder(Long oid) {
+        User u = null;
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT user_id FROM %s WHERE order_id=%d", primaryTable, oid);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                long uid = rs.getLong("user_id");
+                u = UserDataSource.getInstance().getUser(uid);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return u;
+    }
+
+    /**
+     * @return the orders associated with current branch
+     */
     public ArrayList<Order> getOrdersOfBranch() {
         ArrayList<Order> list = new ArrayList<>();
-        User user = new User(123, "adf", "adfs", "adfa", "dfa", "adf", new Address("Istanbul", "adf", "af", 14), UserType.CUSTOMER, 15, new RestaurantBranch(132413, "fdafds", new Address("dsf", "adf", "adfa", 1234)));
-        ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesOfCurrentBranch();
-        Date date = new Date();
-        list.add(new Order(1324, user, date.getTime(), deliverables, OrderState.PENDING));
+        User currentUser = AuthenticationManager.getInstance().getCurrentUser();
+        Long bid = currentUser.getAffiliatedBranch().getBid();
+        try {
+            Statement stmt = connection.createStatement();
+            String query = String.format("SELECT * FROM %s natural join Branch WHERE bid=%d", primaryTable, bid);
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                long oid = rs.getLong("order_id");
+                Date date = rs.getDate("order_date");
+                String state = rs.getString("order_state");
+                OrderState os = orderStateHashMap.get(state);
+                ArrayList<Deliverable> deliverables = DeliverableDataSource.getInstance().getDeliverablesInOrder(oid);
+                list.add(new Order(oid, getUserFromOrder(oid), date.getTime(), deliverables, os));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         return list;
     }
 
+    protected HashMap<Deliverable, Integer> groupDeliverables(ArrayList<Deliverable> deliverables) {
+        HashMap<Deliverable, Integer> hm = new HashMap<>();
+        for (Deliverable d : deliverables) {
+            if (hm.containsKey(d))
+                hm.put(d, hm.get(d) + 1);
+            else
+                hm.put(d, 1);
+        }
+        return hm;
+    }
+
     public Order createOrder(ArrayList<Deliverable> deliverables) {
-        Date date = new Date();
-        long oid = getNextIdLong("Orders", "oder_id");
+        LocalDate date = now();
+        long milis = System.currentTimeMillis();
+        User user = AuthenticationManager.getInstance().getCurrentUser();
+        long oid = getNextIdLong("Orders", "order_id");
+        String orderInsert = String.format(
+                "%d, %d, '%s', '%s'",
+                oid,
+                user.getUID(),
+                parseDate(date),
+                orderStateHashMapReverse.get(OrderState.PENDING)
+        );
+        DataBaseCredentials.OperationResult res1 = insertIntoDb("Orders", orderInsert);
+
+        HashMap<Deliverable, Integer> deliverableAmounts = groupDeliverables(deliverables);
+        for (Deliverable d : deliverableAmounts.keySet()) {
+            String deliverablesInsert = String.format("%d, %d, %d", oid, d.getDid(), deliverableAmounts.get(d));
+            DataBaseCredentials.OperationResult res2 = insertIntoDb("OrderContainsDeliverables", deliverablesInsert);
+        }
+
         return new Order(oid, AuthenticationManager.getInstance().getCurrentUser(),
-                date.getTime(), deliverables, OrderState.PENDING);
+                milis, deliverables, OrderState.PENDING);
     }
 
 

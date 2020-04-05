@@ -3,6 +3,8 @@ package DataSource;
 import database.DatabaseConnectionHandler;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
@@ -185,5 +187,22 @@ abstract class AbstractDataSource {
             System.out.println(EXCEPTION_TAG + e.getMessage());
             return OperationResult.updateFailed;
         }
+    }
+
+    /**
+     * this method is necessary to overcome locale issue in db insertions
+     *
+     * @param date
+     * @return
+     */
+    protected String parseDate(LocalDate date) {
+        String d = date.toString();
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-YYYY");
+            d = formatter.format(date);
+        } catch (Exception e) {
+            System.out.println("Time formatting error.");
+        }
+        return d;
     }
 }

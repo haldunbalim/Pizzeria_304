@@ -20,7 +20,6 @@ public class StatsViewController extends AbstractViewController {
     private JCheckBox priceCheckBox;
     private JCheckBox vehicleCheckBox;
     private JCheckBox orderCountCheckBox;
-    private JCheckBox orderedByAllCheckBox;
     private JCheckBox drivenByAllCheckBox;
     private JButton fetchStatsButton;
     private JTextArea textArea;
@@ -57,7 +56,7 @@ public class StatsViewController extends AbstractViewController {
                 }
 
                 if (highestPriceOrderCheckBox.isSelected()) {
-                    st += String.format("Highest revenue from single sale is %d dollars\n", dataSource.getMaxPriceOrder(startDate, endDate));
+                    st += String.format("Highest revenue from single sale is %.2f dollars\n", dataSource.getMaxPriceOrder(startDate, endDate));
                 }
 
                 if (orderCountCheckBox.isSelected()) {
@@ -68,15 +67,6 @@ public class StatsViewController extends AbstractViewController {
                     HashMap<String, Integer> map = dataSource.getDriveCountOfEachVehicle(startDate, endDate);
                     for (String licensePlate : map.keySet()) {
                         st += String.format("The vehicle with license plate %s is used %d times\n", licensePlate, map.get(licensePlate));
-                    }
-                }
-
-                if (orderedByAllCheckBox.isSelected()) {
-                    ArrayList<String> result = dataSource.getOrderedByAllInfo(startDate, endDate);
-                    if (result.size() == 0) {
-                        st += "There is no item which is ordered by every customer\n";
-                    } else {
-                        st += String.format("The items with following names are ordered by every customer: %s\n", String.join(", ", result));
                     }
                 }
 

@@ -6,6 +6,8 @@ import oracle.ucp.common.waitfreepool.Tuple;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class StatsDataSource extends AbstractDataSource {
     private static StatsDataSource instance = new StatsDataSource();
@@ -40,12 +42,22 @@ public class StatsDataSource extends AbstractDataSource {
         }
     }
 
-    public String[] getOrderedByAllInfo(String startDate, String endDate) {
-        return null;
+    public int getOrderCount() {
+        return 0;
     }
 
-    public String[] getDrivenByAllInfo(String startDate, String endDate) {
-        return null;
+    public HashMap<String, Integer> getDriveCountOfEachVehicle() {
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        return map;
     }
 
+    public ArrayList<String> getOrderedByAllInfo(String startDate, String endDate) {
+        ArrayList<String> result = new ArrayList<>();
+        return result;
+    }
+
+    public ArrayList<String> getDrivenByAllInfo(String startDate, String endDate) {
+        ArrayList<String> result = new ArrayList<>();
+        return result;
+    }
 }

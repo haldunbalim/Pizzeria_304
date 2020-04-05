@@ -40,10 +40,10 @@ public class CustomerTabs extends JTabbedPane {
         repaint();
     }
 
-    //TODO: Refresh View orders??
-    //TODO: Refresh Profile?
     public void openOrderViewController() {
         setComponentAt(1, new OrderViewController().getMainPanel());
+        ViewOrdersViewController.getInstance().configureUI();
+        ProfileViewController.getInstance().configureUI();
         repaint();
     }
 

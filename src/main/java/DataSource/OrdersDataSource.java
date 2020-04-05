@@ -162,7 +162,13 @@ public class OrdersDataSource extends AbstractDataSource {
             ps.setString(1, orderStateHashMapReverse.get(newState));
             ps.setLong(2, oid);
             VehicleDataSource.getInstance().setVehicleAvailability(vehicle, vehicleAvail);
-
+            if (newState == OrderState.DELIVERED) {
+                String vehicleInsert = String.format(
+                        "'%s', %d, %d", vehicle.getLicensePlate(),
+                        AuthenticationManager.getInstance().getCurrentUser().getUID(), oid
+                );
+                DataBaseCredentials.OperationResult res1 = insertIntoDb("DriverCarriesOrder", vehicleInsert);
+            }
             ps.close();
             connection.commit();
         } catch (SQLException e) {

@@ -58,8 +58,8 @@ public class EmployeesDataSource extends AbstractDataSource {
         long newId = getNextIdLong(primaryTable, "user_id");
         String statement = String.format("%d, '%s', '%s', '%s', null, '%s', '%s'",
                 newId, "name", "surname", username, password, "employee");
-        String statementForBranch = String.format("%d, %d", AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid(),
-                newId);
+        String statementForBranch = String.format("%d, %d",
+                newId, AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid());
         DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, statement);
         DataBaseCredentials.OperationResult res2 = insertIntoDb("EmployeeWorksAtBranch", statementForBranch);
 

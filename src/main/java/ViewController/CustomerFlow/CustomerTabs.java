@@ -11,7 +11,6 @@ public class CustomerTabs extends JTabbedPane {
 
     private static CustomerTabs instance = new CustomerTabs();
     private ArrayList<Deliverable> currentOrderDeliverables;
-    private ArrayList<Integer> currentOrderDeliverableAmounts;
 
     private CustomerTabs() {
         this.addTab("Profile", ProfileViewController.getInstance().getMainPanel());
@@ -56,11 +55,4 @@ public class CustomerTabs extends JTabbedPane {
         this.currentOrderDeliverables = currentOrderDeliverables;
     }
 
-    public ArrayList<Integer> getCurrentOrderDeliverableAmounts() {
-        return currentOrderDeliverableAmounts;
-    }
-
-    public void setCurrentOrderDeliverableAmounts(ArrayList<Integer> currentOrderDeliverableAmounts) {
-        this.currentOrderDeliverableAmounts = currentOrderDeliverableAmounts;
-    }
 }

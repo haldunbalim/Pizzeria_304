@@ -131,7 +131,7 @@ public class OrdersDataSource extends AbstractDataSource {
         User user = AuthenticationManager.getInstance().getCurrentUser();
         long oid = getNextIdLong("Orders", "order_id");
         String orderInsert = String.format(
-                "%d, %d, '%s', '%s'",
+                "%d, %d, TO_DATE('%s'), '%s'",
                 oid,
                 user.getUID(),
                 parseDate(date),

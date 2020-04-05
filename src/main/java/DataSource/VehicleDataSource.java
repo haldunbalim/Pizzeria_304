@@ -51,7 +51,7 @@ public class VehicleDataSource extends AbstractDataSource {
                 String availability = rs.getString("availability");
                 boolean avail = availabilityHasMap.get(availability);
 
-                list.add(new Vehicle(licensePlate, model, brand, avail));
+                list.add(new Vehicle(licensePlate, model, brand, avail, bid));
             }
             rs.close();
             stmt.close();
@@ -70,9 +70,11 @@ public class VehicleDataSource extends AbstractDataSource {
         model = model.toUpperCase().charAt(0) + model.toLowerCase().substring(1);
         boolean availability = v.isAvailable();
         String avail = availabilityHasMapReverse.get(availability);
+        long bid = v.getBid();
 
         String brand2 = checkBrandName(brand, model);
-        String setValues = String.format("model='%s', availability='%s' WHERE licence_plate='%s'", model, avail, licensePlate);
+        String setValues = String.format("model='%s', availability='%s', bid=%d WHERE licence_plate='%s'",
+                model, avail, bid, licensePlate);
 
         updateColumnValues(primaryTable, setValues);
         v.setBrand(brand2);
@@ -87,12 +89,14 @@ public class VehicleDataSource extends AbstractDataSource {
         licensePlate = licensePlate.toUpperCase();
         brand = brand.toUpperCase().charAt(0) + brand.toLowerCase().substring(1);
         model = model.toUpperCase().charAt(0) + model.toLowerCase().substring(1);
+        long bid = AuthenticationManager.getInstance().getCurrentUser().getAffiliatedBranch().getBid();
 
         brand = checkBrandName(brand, model);
         Vehicle v = null;
-        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable, String.format("'%s', '%s', '%s'", licensePlate, model, "Y"));
+        DataBaseCredentials.OperationResult res = insertIntoDb(primaryTable,
+                String.format("'%s', '%s', '%s', %d", licensePlate, model, "Y", bid));
         if (res == DataBaseCredentials.OperationResult.inserted) {
-            v = new Vehicle(licensePlate, model, brand, true);
+            v = new Vehicle(licensePlate, model, brand, true, bid);
         }
         return v;
     }

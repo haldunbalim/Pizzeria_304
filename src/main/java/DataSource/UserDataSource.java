@@ -39,6 +39,10 @@ public class UserDataSource extends AbstractDataSource {
         return instance;
     }
 
+    /**
+     * @param uid
+     * @return User instance
+     */
     public User getUser(long uid) {
         User u = null;
         try {
@@ -55,7 +59,6 @@ public class UserDataSource extends AbstractDataSource {
                 String userType = rs.getString("user_type");
                 UserType type = userTypeHashMap.get(userType);
                 Address address = null;
-                ;
                 long bid;
                 RestaurantBranch affiliatedBranch = null;
                 if (type == UserType.EMPLOYEE || type == UserType.MANAGER) {
@@ -69,8 +72,8 @@ public class UserDataSource extends AbstractDataSource {
                 int membershipPoints = 0;
                 if (type == UserType.CUSTOMER)
                     membershipPoints = getCustomerPoints(uid);
-                    u = new User(uid, username, password, name, surname, phoneNumber, address, type,
-                            membershipPoints, affiliatedBranch);
+                u = new User(uid, username, password, name, surname, phoneNumber, address, type,
+                        membershipPoints, affiliatedBranch);
             }
             rs.close();
             stmt.close();
@@ -80,7 +83,7 @@ public class UserDataSource extends AbstractDataSource {
         return u;
     }
 
-    //TODO: check user type and update address
+    //TODO: Check how this method works may have a bug
     public void updateUserFields(User user) {
         long id = user.getUID();
         String username = user.getUsername();
@@ -95,7 +98,7 @@ public class UserDataSource extends AbstractDataSource {
                         "password = '%s'," +
                         "name ='%s'," +
                         "surname ='%s'," +
-                        "phoneNO = '%s', " +
+                        "phoneNO = '%s'" +
                         "WHERE user_id= %d",
                 username,
                 password,
@@ -109,6 +112,18 @@ public class UserDataSource extends AbstractDataSource {
         // DataBaseCredentials.OperationResult resAddress = DataBaseCredentials.OperationResult.updated;
         if (user.getUserType() == UserType.CUSTOMER) {
             Address a = user.getAddress();
+            String statementForAddress = String.format(
+                    "ADDRESS_ID=%d," +
+                            "STREETNAME='%s'," +
+                            "HOUSENR=%d," +
+                            "POSTALCODE=%d",
+                    // TODO: get this when Address model is updated
+                    getNextIdLong("Address", "addres_id"),//a.getId(),
+                    a.getStreetName(),
+                    a.getHouseNumber(),
+                    a.getPostalCode());
+            DataBaseCredentials.OperationResult resAddress = updateColumnValues("Address", statementForAddress);
+
             String statementForCity = String.format(
                     "City='%s'," +
                             "POSTALCODE='%s'",
@@ -118,24 +133,9 @@ public class UserDataSource extends AbstractDataSource {
 
             DataBaseCredentials.OperationResult resCity = updateColumnValues("CityPostalCode", statementForCity);
             // if the new postal code is not in db insert it
+            DataBaseCredentials.OperationResult resCity2 = DataBaseCredentials.OperationResult.insertionFailed;
             if (resCity == DataBaseCredentials.OperationResult.noElementUpdated) {
-                resCity = insertIntoDb("CityPostalCode", String.format("'%s', '%s'", a.getCity(), a.getPostalCode()));
-            }
-            if (resCity == DataBaseCredentials.OperationResult.updated || resCity == DataBaseCredentials.OperationResult.inserted) {
-                String statementForAddress = String.format(
-                        "ADDRESS_ID=%d," +
-                                "STREETNAME='%s'," +
-                                "HOUSENR=%d," +
-                                "POSTALCODE=%d",
-                        // TODO: get this when Address model is updated
-                        1,//a.getId(),
-                        a.getStreetName(),
-                        a.getHouseNumber(),
-                        a.getPostalCode()
-                );
-
-                DataBaseCredentials.OperationResult resAddress =
-                        updateColumnValues("Address", statementForAddress);
+                resCity2 = insertIntoDb("CityPostalCode", String.format("'%s', '%s'", a.getCity(), a.getPostalCode()));
             }
         }
     }

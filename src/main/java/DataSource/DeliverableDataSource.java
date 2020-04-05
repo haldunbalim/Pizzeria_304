@@ -112,7 +112,8 @@ public class DeliverableDataSource extends AbstractDataSource {
         String name = deliverable.getName();
         double p = deliverable.getPrice();
         float price = (float) p;
-        String values = String.format(Locale.CANADA, "name='%s', price=%.2f WHERE did=%d", name, price, did);
+        long bid = deliverable.getBid();
+        String values = String.format(Locale.CANADA, "name='%s', price=%.2f, bid=%d WHERE did=%d", name, price, bid, did);
         updateColumnValues(primaryTable, values);
     }
 

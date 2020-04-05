@@ -42,6 +42,7 @@ public class Coordinator {
                 frame.setContentPane(LoginViewController.getInstance().getMainPanel());
                 break;
             case MANAGER_TABS:
+                frame.setBounds(frame.getX(), frame.getY(), frame.getWidth() * 2, frame.getHeight());
                 frame.setContentPane(ManagerTabs.getInstance());
                 break;
             case SET_PROFILE_PAGE:

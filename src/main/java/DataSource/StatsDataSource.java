@@ -1,12 +1,12 @@
 package DataSource;
 
 import Model.User;
-import oracle.ucp.common.waitfreepool.Tuple;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class StatsDataSource extends AbstractDataSource {
@@ -20,44 +20,127 @@ public class StatsDataSource extends AbstractDataSource {
         return instance;
     }
 
-    public Tuple<Double, Integer> getPriceInfo(String startDate, String endDate) {
+    public Double getPriceInfo(Date startDate, Date endDate) {
         try {
-            String query = "SELECT *" +
-                    "FROM ORDERS NATURAL JOIN ORDERCONTAINSDELIVERABLES NATURAL JOIN DELIVERABLE" +
-                    "WHERE DELIVERABLE.BID = '%d' AND ORDER_DATE > '%s' AND ORDER_DATE< '%s'";
-            query = String.format(query, currentUser.getAffiliatedBranch().getBid(), startDate, endDate);
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            String query = "SELECT AMOUNT*PRICE\n" +
+                    "FROM ORDERS NATURAL JOIN ORDERCONTAINSDELIVERABLES NATURAL JOIN DELIVERABLE\n" +
+                    "WHERE DELIVERABLE.BID = ? AND ORDER_DATE > ? AND ORDER_DATE< ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
             double totalPrice = 0;
-            int totalAmount = 0;
             while (rs.next()) {
-                int amount = rs.getInt("amount");
-                totalAmount += amount;
-                totalPrice += amount * rs.getDouble("price");
+                totalPrice += rs.getDouble("AMOUNT*PRICE");
             }
-            return new Tuple(totalPrice, totalAmount);
+            return totalPrice;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public int getOrderCount() {
-        return 0;
+    public int getOrderCount(Date startDate, Date endDate) {
+        try {
+            String query = "SELECT DISTINCT ORDER_ID\n" +
+                    "FROM ORDERS NATURAL JOIN ORDERCONTAINSDELIVERABLES NATURAL JOIN DELIVERABLE\n" +
+                    "WHERE DELIVERABLE.BID = ? AND ORDER_DATE > ? AND ORDER_DATE< ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            int count = 0;
+            while (rs.next())
+                count++;
+            return count;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
     }
 
-    public HashMap<String, Integer> getDriveCountOfEachVehicle() {
-        HashMap<String, Integer> map = new HashMap<String, Integer>();
-        return map;
+    public HashMap<String, Integer> getDriveCountOfEachVehicle(Date startDate, Date endDate) {
+        HashMap<String, Integer> map = new HashMap<>();
+        try {
+            String query = "SELECT LICENSE_PLATE,COUNT(*)" +
+                    "FROM (((DRIVERCARRIESORDER INNER JOIN ORDERS ON ORDERS.ORDER_ID = DRIVERCARRIESORDER.ORDER_ID)" +
+                    "    INNER JOIN ORDERCONTAINSDELIVERABLES O on ORDERS.ORDER_ID = O.ORDER_ID)" +
+                    "    INNER JOIN DELIVERABLE D on O.DID = D.DID)" +
+                    "WHERE D.BID = ? AND ORDER_DATE > ? AND ORDER_DATE< ?" +
+                    "GROUP BY LICENSE_PLATE";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                map.put(rs.getString("LICENSE_PLATE"), rs.getInt("COUNT(*)"));
+            }
+            return map;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return map;
+        }
     }
 
-    public ArrayList<String> getOrderedByAllInfo(String startDate, String endDate) {
+    public ArrayList<String> getOrderedByAllInfo(Date startDate, Date endDate) {
         ArrayList<String> result = new ArrayList<>();
-        return result;
+        try {
+            String query = "";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(rs.getString("NAME"));
+            }
+            return result;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return result;
+        }
     }
 
-    public ArrayList<String> getDrivenByAllInfo(String startDate, String endDate) {
+    public ArrayList<String> getDrivenByAllInfo(Date startDate, Date endDate) {
         ArrayList<String> result = new ArrayList<>();
-        return result;
+        try {
+            String query = "";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(rs.getString("LICENSE_PLATE"));
+            }
+            return result;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return result;
+        }
+    }
+
+    public Double getMaxPriceOrder(Date startDate, Date endDate) {
+        try {
+            String query = "SELECT MAX(AMOUNT*PRICE) AS MAX\n" +
+                    "FROM ORDERS NATURAL JOIN ORDERCONTAINSDELIVERABLES NATURAL JOIN DELIVERABLE\n" +
+                    "WHERE DELIVERABLE.BID = ? AND ORDER_DATE > ? AND ORDER_DATE< ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setLong(1, currentUser.getAffiliatedBranch().getBid());
+            stmt.setDate(2, new java.sql.Date(startDate.getTime()));
+            stmt.setDate(3, new java.sql.Date(endDate.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            double totalPrice = 0;
+            while (rs.next()) {
+                totalPrice += rs.getDouble("MAX");
+            }
+            return totalPrice;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

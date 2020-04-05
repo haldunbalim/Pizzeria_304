@@ -27,7 +27,7 @@ public class SetProfilePage extends AbstractViewController {
     private JButton saveButton;
     private JLabel errorLabel;
     private JComboBox cityComboBox;
-    private String[] cities = {"Vancouver", "Toronto", "Montreal", "Istanbul"};
+    private String[] cities = {"Vancouver", "Toronto", "Montreal"};
     User currentUser = AuthenticationManager.getInstance().getCurrentUser();
 
     private SetProfilePage() {

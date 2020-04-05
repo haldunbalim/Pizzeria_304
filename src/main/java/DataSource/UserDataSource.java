@@ -116,9 +116,9 @@ public class UserDataSource extends AbstractDataSource {
                     "ADDRESS_ID=%d," +
                             "STREETNAME='%s'," +
                             "HOUSENR=%d," +
-                            "POSTALCODE=%d",
+                            "POSTALCODE=%s",
                     // TODO: get this when Address model is updated
-                    getNextIdLong("Address", "addres_id"),//a.getId(),
+                    getNextIdLong("Address", "address_id"),//a.getId(),
                     a.getStreetName(),
                     a.getHouseNumber(),
                     a.getPostalCode());

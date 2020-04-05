@@ -39,6 +39,9 @@ public class AuthenticationManager extends AbstractDataSource {
         if (res == DataBaseCredentials.OperationResult.inserted) {
             if (userType == UserType.CUSTOMER) {
                 // Customer tablosuna ekleme yap
+                // address ve city postal tablosuna ekleme yap
+            } else {
+                // employee works at branch ekleme yap
             }
             return AuthStatus.NEW_REGISTRATION;
         } else if (res == DataBaseCredentials.OperationResult.integrityConstraintError) {

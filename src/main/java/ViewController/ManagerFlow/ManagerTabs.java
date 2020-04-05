@@ -10,6 +10,7 @@ public class ManagerTabs extends JTabbedPane {
         this.addTab("Deliverables", EditDeliverablesViewController.getInstance().getMainPanel());
         this.addTab("Vehicles", EditVehiclesViewController.getInstance().getMainPanel());
         this.addTab("Employees", EditEmployeesViewController.getInstance().getMainPanel());
+        this.addTab("Statistics", StatsViewController.getInstance().getMainPanel());
     }
 
     public static ManagerTabs getInstance() {

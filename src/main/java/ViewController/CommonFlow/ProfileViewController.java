@@ -20,6 +20,7 @@ public class ProfileViewController extends AbstractViewController {
     private JLabel addressLabel;
     private JButton editButton;
     private JLabel phoneNumberLabel;
+    private JLabel addressHeaderLabel;
 
     private User currentUser = AuthenticationManager.getInstance().getCurrentUser();
 
@@ -48,7 +49,12 @@ public class ProfileViewController extends AbstractViewController {
         headerLabel.setText("Welcome, " + currentUser.getName() + " " + currentUser.getSurname());
         usernameLabel.setText(currentUser.getUsername());
         membershipLabel.setText(currentUser.getPhoneNumber());
-        addressLabel.setText(currentUser.getAddress().toString());
+        if (currentUser.getUserType() == UserType.EMPLOYEE) {
+            addressHeaderLabel.setText("Branch Name");
+            addressLabel.setText(currentUser.getAffiliatedBranch().getName());
+        } else {
+            addressLabel.setText(currentUser.getAddress().toString());
+        }
         phoneNumberLabel.setText(currentUser.getPhoneNumber());
         editButton.addActionListener(new ActionListener() {
             @Override
